@@ -1,17 +1,28 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Button, Modal } from "antd";
 import { useState, useEffect } from "react";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { info } from '../../../../../../redux/slices/user-slice';
 import UserInfo from '../UserInfo';
 import apis from '../../../../../../services/apis/modules';
+import { Button, message, Space, Modal } from 'antd';
+import { list } from '../../../../../../redux/slices/user-slice'; 
 
 export default function Body() {
     //Store
     const dispatch = useDispatch()
     const userList = useSelector((state) => state.userSlice.userList)
+    const access_token = localStorage.getItem("access_token");
+    async function handleGetUserList(data) {
+    const getList = await apis.userApi.get_all(access_token);
+    if (getList.status==200) {
+    console.log("getList",getList.data);
 
+    dispatch(list(getList.data));
+    }
+    }
+    
+    
     //Detail
     const [showDetail, setShowDetail] = useState(false);
     const handleShowDetail = (data) => {
@@ -21,10 +32,13 @@ export default function Body() {
     const handleOk = () => {
         setShowDetail(false);
         setUserUpdate(false);
+        setAvatarUrl(null)
     };
     const handleCancel = () => {
         setShowDetail(false);
         setUserUpdate(false);
+        setAvatarUrl(null)
+
     };
     //Update
     const [userUpdate, setUserUpdate] = useState(false);
@@ -41,15 +55,61 @@ export default function Body() {
         setUserUpdate(true);
         setDataUpdate(data)
     };
-    const handleFormSubmit = async (course_id, e) => {
+    const handleFormSubmit = async (user_id, e) => {
+        console.log("dataUpdate",dataUpdate);
         e.preventDefault();
         const access_token = localStorage.getItem("access_token");
-        await apis.userApi.update(access_token, course_id);
+        const formData = new FormData();
+        for (const key in dataUpdate) {
+            formData.append(key, dataUpdate[key]);
+        }
+        const file = e.target.elements.avatar.files[0];
+        if (file) {
+            formData.append('avatar', file);
+        }
+        const result=await apis.userApi.update(formData,{access_token, user_id});
+        console.log("result",result);
+        if(result.status==200){
+            handleGetUserList("");
+            success("Update info success")
+        }
     };
+    const [avatarUrl,setAvatarUrl] =useState(null)
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setAvatarUrl(imageUrl);
+        }
+    };
+    
+    //Message
+    const [messageApi, contextHolder] = message.useMessage();
+    const success = (message) => {
+        messageApi.open({
+          type: 'success',
+          content: message,
+        });
+      };
+    
+      const error = () => {
+        messageApi.open({
+          type: 'error',
+          content: 'This is an error message',
+        });
+      };
+    
+      const warning = () => {
+        messageApi.open({
+          type: 'warning',
+          content: 'This is a warning message',
+        });
+      };
 
 
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+             {contextHolder}
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -121,7 +181,7 @@ export default function Body() {
                                                 <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
                                                     <form
                                                         onSubmit={(e) => {
-                                                            handleFormSubmit(user.id, e);
+                                                            handleFormSubmit(dataUpdate.id, e);
                                                         }}
                                                     >
                                                         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -132,15 +192,17 @@ export default function Body() {
                                                                 >
                                                                     Avatar
                                                                 </label>
-                                                                <img src={dataUpdate.avatar} alt="avatar" style={{ width: "50px", height: "50px" }} />
+                                                                <img src={avatarUrl ||dataUpdate.avatar} alt="avatar" style={{ width: "50px", height: "50px" }} />
                                                                 <input
                                                                     type="file"
                                                                     name="avatar"
+                                                                    id='avatar'
                                                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                                                     placeholder="Full name of user"
                                                                     required=""
                                                                     // value={dataUpdate.fullname}
-                                                                    onChange={(e) => setFormData(e)}
+                                                                    // onChange={(e) => setFormData(e)}
+                                                                    onChange={handleFileChange}
                                                                 />
 
                                                             </div>

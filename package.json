@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.1",
-    "antd": "^5.15.0",
+    "antd": "^5.15.3",
     "axios": "^1.6.7",
     "flowbite": "^2.3.0",
     "i18next": "^23.10.1",

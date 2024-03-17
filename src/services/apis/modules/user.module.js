@@ -42,11 +42,11 @@ export default {
         };
       });
   },
-  update: async (data) => {
+  update: async (form_data,data) => {
     return await axios
-      .put(import.meta.env.VITE_SERVER_HOST + "/api/user", {
-        ...form_data,
-      },
+      .put(import.meta.env.VITE_SERVER_HOST + "/api/user/"+`${data.user_id}`,
+        form_data
+      ,
       {
         headers: {
           Authorization: `Bearer ${data.access_token}` 
@@ -58,7 +58,7 @@ export default {
         console.log("error", error);
         return {
           status: false,
-          message: "Get list user failed",
+          message: "Update user failed",
         };
       });
   },

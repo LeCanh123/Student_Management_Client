@@ -1,10 +1,24 @@
 import React from 'react'
+import apis from '../../../../../../services/apis/modules';
+import { useSelector, useDispatch } from 'react-redux'
+import { list } from '../../../../../../redux/slices/user-slice'; 
+
 
 export default function Search() {
+  const dispatch = useDispatch()
+  const access_token = localStorage.getItem("access_token");
+  async function handleSearch(e){
+    const keywordValue = e.target.elements.keyword.value;
+    const searchList = await apis.userApi.search(access_token,keywordValue);
+    if (searchList.status==200) {
+    console.log("searchList",searchList);
+    dispatch(list(searchList.data));
+    }
+  }
   return (
     <form
         className="flex items-center max-w-sm mx-auto mb-6"
-        // onSubmit={handleSearch}
+        onSubmit={(e)=>{e.preventDefault(); handleSearch(e)}}
     >
         <label htmlFor="simple-search" className="sr-only">
           Search
@@ -35,7 +49,7 @@ export default function Search() {
           />
         </div>
         <button
-          type="submit"
+          // type="submit"
           className="p-2.5 ms-2 text-sm font-medium text-white bg-gray-700 rounded-lg border border-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
         >
           <svg

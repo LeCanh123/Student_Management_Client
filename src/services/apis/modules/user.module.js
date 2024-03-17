@@ -42,6 +42,22 @@ export default {
         };
       });
   },
+  search: async (access_token,keyword) => {
+    return await axios
+      .get(import.meta.env.VITE_SERVER_HOST + "/api/user/search?keyword="+keyword, {
+        headers: {
+          Authorization: `Bearer ${access_token}` 
+        }
+      })
+      .then((response) => response)
+      .catch((error) => {
+        console.log("error", error);
+        return {
+          status: false,
+          message: "Search user failed",
+        };
+      });
+  },
   update: async (form_data,data) => {
     return await axios
       .put(import.meta.env.VITE_SERVER_HOST + "/api/user/"+`${data.user_id}`,

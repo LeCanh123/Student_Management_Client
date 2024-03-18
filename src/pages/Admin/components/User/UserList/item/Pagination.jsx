@@ -18,7 +18,6 @@ export default function PaginationPage() {
       }else{
         dispatch(pagination({skip:(skip-1)*take}));
       }
-      
       }}/>
     </>
     

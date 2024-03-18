@@ -9,7 +9,11 @@ const initialState = {
 
     //search
     is_search:false,
-    value_search:""
+    value_search:"",
+
+    //update
+    update_status:false,
+    data_update:{}
 }
 
 export const userSlice = createSlice({
@@ -36,7 +40,13 @@ export const userSlice = createSlice({
     setSeachValue:(state,action) => {
       state.value_search = action.payload.value_search
     },
+    setDataUpdate:(state,action) => {
+      state.data_update = action.payload
+    },
+    setUpdateStatus:(state,action) => {
+      state.update_status = action.payload
+    },
   },
 })
-export const { info,list,pagination,setSeachStatus,setSeachValue } = userSlice.actions
+export const { info,list,pagination,setSeachStatus,setSeachValue,setDataUpdate,setUpdateStatus } = userSlice.actions
 export default userSlice.reducer

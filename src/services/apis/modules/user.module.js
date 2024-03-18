@@ -1,6 +1,22 @@
 import axios from "axios";
 
 export default {
+  register: async (access_token,form_data) => {
+    return await axios
+      .post(import.meta.env.VITE_SERVER_HOST + "/api/user",
+        form_data
+      ,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}` 
+        }
+      }
+      )
+      .then((response) => response)
+      .catch((error) => {
+        return error.response.data
+      });
+  },
   login: async (form_data) => {
     return await axios
       .post(import.meta.env.VITE_SERVER_HOST + "/api/user/login", {
@@ -68,10 +84,7 @@ export default {
       )
       .then((response) => response)
       .catch((error) => {
-        return {
-          status: false,
-          message: "Update user failed",
-        };
+        return error.response.data
       });
   },
 };

@@ -16,7 +16,6 @@ const CourseList = () => {
     const search = await apis.search(keyword);
     if (search.status) {
       setSearchResult(search.data);
-      console.log("searchResult", searchResult);
     }
   };
 

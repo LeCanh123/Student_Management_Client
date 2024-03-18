@@ -10,7 +10,6 @@ export default {
         },
       })
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           return {
             status: true,
@@ -20,7 +19,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Invalid data. Please check and try again.",
@@ -51,7 +49,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Update failed course information",
@@ -72,7 +69,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Course deletion failed",
@@ -84,7 +80,6 @@ export default {
     return await axios
       .get(import.meta.env.VITE_SERVER_HOST + "/api/course" + course_id)
       .then((response) => {
-        console.log("response", response);
         return {
           status: true,
           message: "Get detailed course information successfully",
@@ -92,7 +87,6 @@ export default {
         };
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Get failed course details",
@@ -106,7 +100,6 @@ export default {
       .get(import.meta.env.VITE_SERVER_HOST + "/api/course")
       .then((response) => response)
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Get the list of failed courses",
@@ -130,7 +123,6 @@ export default {
         };
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Course search failed",
@@ -143,7 +135,6 @@ export default {
       .get(import.meta.env.VITE_SERVER_HOST + "/api/course")
       .then((response) => response)
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Get the list of failed courses",

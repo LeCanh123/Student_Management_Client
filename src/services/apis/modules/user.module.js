@@ -19,39 +19,36 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Invalid email or password.",
         };
       });
   },
-  get_all: async (access_token) => {
+  get_all: async (access_token,skip,take) => {
     return await axios
-      .get(import.meta.env.VITE_SERVER_HOST + "/api/user", {
+      .get(import.meta.env.VITE_SERVER_HOST + `/api/user?skip=${skip}&take=${take}`, {
         headers: {
           Authorization: `Bearer ${access_token}` 
         }
       })
       .then((response) => response)
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Get list user failed",
         };
       });
   },
-  search: async (access_token,keyword) => {
+  search: async (access_token,keyword,skip,take) => {
     return await axios
-      .get(import.meta.env.VITE_SERVER_HOST + "/api/user/search?keyword="+keyword, {
+      .get(import.meta.env.VITE_SERVER_HOST + "/api/user/search?keyword="+keyword+`&skip=${skip}&take=${take}`, {
         headers: {
           Authorization: `Bearer ${access_token}` 
         }
       })
       .then((response) => response)
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Search user failed",
@@ -71,7 +68,6 @@ export default {
       )
       .then((response) => response)
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Update user failed",

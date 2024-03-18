@@ -10,7 +10,6 @@ export default {
         },
       })
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           return {
             status: true,
@@ -20,7 +19,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Invalid data. Please check and try again",
@@ -41,7 +39,6 @@ export default {
         }
       )
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           return {
             status: true,
@@ -50,7 +47,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Invalid data. Please check and try again",
@@ -62,7 +58,6 @@ export default {
     return await axios
       .delete(import.meta.env.VITE_SERVER_HOST + "api/teachers" + teacher_id)
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           return {
             status: true,
@@ -72,7 +67,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "You do not have permission to delete this teacher",
@@ -84,7 +78,6 @@ export default {
     return await axios
       .get(import.meta.env.VITE_SERVER_HOST + "api/teachers" + teacher_id)
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           return {
             status: true,
@@ -92,7 +85,6 @@ export default {
           };
         }
       }).catch((error) => {
-        console.log("error", error);
         return {
             status: false,
             message: "Teacher information with the provided ID could not be found"

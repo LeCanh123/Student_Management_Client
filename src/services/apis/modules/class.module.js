@@ -10,7 +10,6 @@ export default {
         },
       })
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           return {
             status: true,
@@ -20,7 +19,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Invalid data. Please check and try again.",
@@ -40,7 +38,6 @@ export default {
       },
     })
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           return {
             status: true,
@@ -50,7 +47,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "Invalid data. Please check and try again.",
@@ -68,7 +64,6 @@ export default {
     return await axios
       .get(import.meta.env.VITE_SERVER_HOST + "api/classes" + class_id)
       .then((response) => {
-        console.log("response", response);
         return {
           status: true,
           message: "The class was found successfully",
@@ -76,7 +71,6 @@ export default {
         };
       })
       .catch((error) => {
-        console.log(error, error);
         return {
           status: false,
           message: "Class information not found with the provided ID.",
@@ -88,7 +82,6 @@ export default {
     return await axios
       .get(import.meta.env.VITE_SERVER_HOST + "api/classes/search" + keyword)
       .then((response) => {
-        console.log("response", response);
         if (response.status === 200) {
           return {
             status: true,
@@ -98,7 +91,6 @@ export default {
         }
       })
       .catch((error) => {
-        console.log("error", error);
         return {
           status: false,
           message: "An error occurred during database processing or querying",

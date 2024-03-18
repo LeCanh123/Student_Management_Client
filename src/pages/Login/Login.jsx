@@ -15,8 +15,6 @@ const Login = () => {
       password: e.target.password.value,
     };
 
-    console.log("form_data", form_data);
-
     if (form_data.email == null || form_data.email == "") {
       message.warning("Email can not be blank");
       return false;

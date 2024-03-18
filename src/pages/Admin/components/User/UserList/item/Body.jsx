@@ -7,20 +7,34 @@ import UserInfo from '../UserInfo';
 import apis from '../../../../../../services/apis/modules';
 import { Button, message, Space, Modal } from 'antd';
 import { list } from '../../../../../../redux/slices/user-slice'; 
-
+import { pagination } from '../../../../../../redux/slices/user-slice';
 export default function Body() {
     //Store
     const dispatch = useDispatch()
+    const {skip,take,total,is_search,value_search} = useSelector((state) => state.userSlice);
     const userList = useSelector((state) => state.userSlice.userList)
     const access_token = localStorage.getItem("access_token");
     async function handleGetUserList(data) {
-    const getList = await apis.userApi.get_all(access_token);
+    const getList = await apis.userApi.get_all(access_token,skip,take);
     if (getList.status==200) {
-    console.log("getList",getList.data);
-
-    dispatch(list(getList.data));
+    dispatch(list(getList.data.data));
+    dispatch(pagination({ total: Math.round(getList.data.total) }));
     }
     }
+    async function handleSearchUserList(data) {
+        const searchList = await apis.userApi.search(access_token,value_search,skip,take);
+        if (searchList.status==200) {
+            dispatch(list(searchList.data.users));
+            dispatch(pagination({total:searchList.data.total}));
+        }
+    }
+    useEffect(()=>{
+        if(!is_search){
+            handleGetUserList({})
+        }else{
+            handleSearchUserList({})
+        }
+    },[skip,take,total])
     
     
     //Detail
@@ -43,7 +57,6 @@ export default function Body() {
     //Update
     const [userUpdate, setUserUpdate] = useState(false);
     const [dataUpdate, setDataUpdate] = useState({});
-    console.log("dataUpdate", dataUpdate);
     function setFormData(e) {
         const { name, value } = e.target;
         setDataUpdate(prevState => ({
@@ -56,7 +69,6 @@ export default function Body() {
         setDataUpdate(data)
     };
     const handleFormSubmit = async (user_id, e) => {
-        console.log("dataUpdate",dataUpdate);
         e.preventDefault();
         const access_token = localStorage.getItem("access_token");
         const formData = new FormData();
@@ -68,7 +80,6 @@ export default function Body() {
             formData.append('avatar', file);
         }
         const result=await apis.userApi.update(formData,{access_token, user_id});
-        console.log("result",result);
         if(result.status==200){
             handleGetUserList("");
             success("Update info success")

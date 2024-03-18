@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux'
 export default function UserInfo() {
     //Store
     const userInfo = useSelector((state) => state.userSlice.userInfo)
-    console.log("userInfo",userInfo);
   return (
     <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
     <form>

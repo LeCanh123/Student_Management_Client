@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export default {
+export const courseModule= {
   create: async (access_token, form_data) => {
     return await axios
       .post(import.meta.env.VITE_SERVER_HOST + "/api/course", form_data, {
@@ -95,9 +95,15 @@ export default {
       });
   },
 
-  find_all: async () => {
+  find_all: async (access_token) => {
     return await axios
-      .get(import.meta.env.VITE_SERVER_HOST + "/api/course")
+      .get(import.meta.env.VITE_SERVER_HOST + "/api/course",
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}` 
+        }
+      }
+      )
       .then((response) => response)
       .catch((error) => {
         return {
@@ -130,14 +136,19 @@ export default {
         };
       });
   },
-  check_auth: async () => {
+
+  check_auth: async (access_token) => {
     return await axios
-      .get(import.meta.env.VITE_SERVER_HOST + "/api/course")
+      .get(import.meta.env.VITE_SERVER_HOST + "/api/classes",{
+        headers: {
+          Authorization: `Bearer ${access_token}` 
+        }
+      })
       .then((response) => response)
       .catch((error) => {
+        console.log("erroer",error);
         return {
           status: false,
-          message: "Get the list of failed courses",
           data: null,
         };
       });

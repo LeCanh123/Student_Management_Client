@@ -31,15 +31,19 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("User", "sub0", <ReadOutlined />, [
-    getItem("Create User", "11", <PlusOutlined />),
-    getItem("User list", "12", <UnorderedListOutlined />),
-  ]),
+  getItem("User", "sub0", <ReadOutlined />, 
+  // [
+    // getItem("Create User", "11", <PlusOutlined />),
+    // getItem("User list", "12", <UnorderedListOutlined />),
+  // ]
+  ),
 
-  getItem("Course", "sub1", <ReadOutlined />, [
-    getItem("Create course", "1", <PlusOutlined />),
-    getItem("Course list", "2", <UnorderedListOutlined />),
-  ]),
+  getItem("Course", "sub1", <ReadOutlined />, 
+  // [
+  //   getItem("Create course", "1", <PlusOutlined />),
+  //   getItem("Course list", "2", <UnorderedListOutlined />),
+  // ]
+  ),
 
   getItem("Class", "sub2", <ApartmentOutlined />, [
     getItem("Create class", "3", <PlusOutlined />),
@@ -64,6 +68,10 @@ const items = [
 ];
 
 const Admin = () => {
+  function logOut(){
+    localStorage.removeItem("access_token");
+    window.location.href='/'
+  }
   const [breadcrumb, setBreadcrumb] = useState([]);
 
   const [menuItem, setMenuItem] = useState(null);
@@ -105,6 +113,7 @@ const Admin = () => {
     }
   };
 
+  //render
   const renderComponent = () => {
     switch (menuItem) {
       case "1":
@@ -119,10 +128,17 @@ const Admin = () => {
         return <CreateTeacher />;
       case "6":
         return <TeacherList />;
+      case "10":
+        logOut()
+        return <>Waiting logout</>
       case "11":
         return <>User</>;
       case "12":
         return <UserList/>;
+      case "sub0":
+        return <UserList/>;
+      case "sub1":
+        return <CourseList/>;
       default:
         return  <UserList />;
     }

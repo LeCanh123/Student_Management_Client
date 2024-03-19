@@ -7,9 +7,7 @@ import apis from '../../../../../../services/apis/modules';
 
 export default function UpdateUser(data) {
     const dispatch = useDispatch()
-
     const {update_status} = useSelector((state) => state.userSlice);
-
     const handleFormSubmit = async (user_id, e) => {
         e.preventDefault();
         const access_token = localStorage.getItem("access_token");
@@ -21,14 +19,18 @@ export default function UpdateUser(data) {
         if (file) {
             formData.append('avatar', file);
         }
+        if(isUserPasswordValid!=""){
+            data.data.error("Invalid password")
+            return
+        }
         const result=await apis.userApi.update(formData,{access_token, user_id});
         if(result.status==200){
-            success("Update info success")
+            data.data.success("Update info success")
             dispatch(setUpdateStatus(false));
-            dispatch(pagination({ total: 1 }));
+            data.data.handleGetUserList()
+            setAvatarUrl(null)
         }else{
-            console.log("result",result);
-            error(result?.message)
+            data.data.error(result?.message)
         }
     };
     const [avatarUrl,setAvatarUrl] =useState(null)
@@ -41,30 +43,27 @@ export default function UpdateUser(data) {
     };
     const handleOk = () => {
         dispatch(setUpdateStatus(false));
+        setAvatarUrl(null)
     };
     const handleCancel = () => {
         dispatch(setUpdateStatus(false));
+        setAvatarUrl(null)
     };
     const {data_update} = useSelector((state) => state.userSlice);
+    console.log("data_update",data_update);
     function setFormData(e) {
         const { name, value } = e.target;
         dispatch(setDataUpdate({...data_update,[name]: value}))
     }
-
-    //Message
-    const [messageApi, contextHolder] = message.useMessage();
-    const success = (message) => {
-        messageApi.open({
-          type: 'success',
-          content: message,
-        });
-    };
-    const error = (message) => {
-    messageApi.open({
-        type: 'error',
-        content: message,
-    });
-    };
+    //password
+    const [isUserPasswordValid,setIsUserPasswordValid]=useState('')
+    function isValidPassword(password) {
+        if((password.length >= 6)||(password.length == 0)){
+            setIsUserPasswordValid('')
+        }else{
+            setIsUserPasswordValid("Invalid password")
+        }
+    }
   return (
 
     <Modal
@@ -73,7 +72,6 @@ export default function UpdateUser(data) {
     onOk={handleOk}
     onCancel={handleCancel}
     >
-        {contextHolder}
     <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
         <form
             onSubmit={(e) => {
@@ -153,6 +151,23 @@ export default function UpdateUser(data) {
 
                 <div>
                     <label
+                        htmlFor="password"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                        New Password
+                    </label>
+                    <input
+                        type="text"
+                        name="password"
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="New password"
+                        onChange={(e) => {setFormData(e);isValidPassword(e.target.value)}}
+                    />
+                     {isUserPasswordValid?<div style={{color:"red"}}>* {isUserPasswordValid}</div>:null}
+                </div>
+
+                <div>
+                    <label
                         htmlFor="role"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
@@ -160,7 +175,6 @@ export default function UpdateUser(data) {
                     </label>
                     <select
                         name="role"
-                        // value={formData.role}
                         value={data_update.role}
                         onChange={(e) => setFormData(e)}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"

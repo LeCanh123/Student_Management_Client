@@ -32,11 +32,11 @@ const Login = () => {
       message.warning("Invalid email address");
     }
 
-    await apis.userApi.login(form_data);
-
+    localStorage.removeItem("access_token");
+    let loginResult = await apis.userApi.login(form_data);
     const access_token = localStorage.getItem("access_token");
     if (access_token) {
-      navigate("/admin");
+      navigate("/");
     }
   };
   return (
@@ -131,16 +131,6 @@ const Login = () => {
                   </a>
                 </div>
               </div>
-
-              <p className="mt-6 text-sm font-light text-gray-500 dark:text-gray-400">
-                Do not have an account yet?{" "}
-                <a
-                  href="register"
-                  className="font-medium text-red-600 hover:underline dark:text-red-500"
-                >
-                  Sign up
-                </a>
-              </p>
             </form>
           </div>
         </div>

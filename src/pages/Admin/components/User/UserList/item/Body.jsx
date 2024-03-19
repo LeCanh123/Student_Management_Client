@@ -36,7 +36,7 @@ export default function Body() {
         }else{
             handleSearchUserList({})
         }
-    },[skip,take,total])
+    },[skip,take,total,is_search])
     
     
     //Detail
@@ -53,18 +53,32 @@ export default function Body() {
     };
     //Update
     const handleOpenModalUpdate = (data) => {
-        dispatch(setDataUpdate(data));
+        dispatch(setDataUpdate({...data,role:data.role?.[0]?.role_name}));
         dispatch(setUpdateStatus(true));
     };
 
+    //model add user
+    const [openFormAddnewUser,setOpenFormAddnewUser]=useState(false);
     
     //Message
     const [messageApi, contextHolder] = message.useMessage();
+    const success = (message) => {
+        messageApi.open({
+          type: 'success',
+          content: message,
+        });
+    };
+    const error = (message) => {
+    messageApi.open({
+        type: 'error',
+        content: message,
+    });
+    };
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
              {contextHolder}
             <button 
-            // onClick={() => handleOpenModalAddUser()}
+            onClick={() => setOpenFormAddnewUser(true)}
             style={{float: "right" ,background:"#0099FF",
             width:"200px",
             height:"50px",
@@ -133,7 +147,7 @@ export default function Body() {
                                             </span>
                                         </Button>
                                         {(
-                                          <UpdateUser></UpdateUser>
+                                          <UpdateUser data={{handleGetUserList,success,error}}></UpdateUser>
                                         )}
                                         <Button
                                             type="dashed"
@@ -150,7 +164,7 @@ export default function Body() {
                         )
                     )}
                 </tbody>
-                <AddUser></AddUser>
+                <AddUser data={{open:openFormAddnewUser,setOpen:setOpenFormAddnewUser,getData:handleGetUserList}}></AddUser>
             </table>
         </div>
     )

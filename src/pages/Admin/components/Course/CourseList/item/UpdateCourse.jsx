@@ -2,73 +2,77 @@ import React from 'react'
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 import { Button, message, Space, Modal } from 'antd';
-import { setUpdateStatus,setDataUpdate,pagination } from '../../../../../../redux/slices/course-slice';
 import apis from '../../../../../../services/apis/modules';
 import { DatePicker } from 'antd';
-
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 export default function UpdateCourse(data) {
-    const dispatch = useDispatch()
-    const {update_status} = useSelector((state) => state.courseSlice);
-    console.log("update_status",update_status);
+  //data update
+  const {dataUpdate}=data.data;
+  const [newDataUpdate,setNewDataUpdate]=useState({start_date:"2024-03-04"});
+
+useEffect(() => {
+  setNewDataUpdate(dataUpdate);
+}, [dataUpdate]);
+  //day config
+  dayjs.extend(customParseFormat);
+  const dateFormat = 'YYYY-MM-DD';
+  const dayNow= new Date();
+  const year = dayNow.getFullYear();
+  const month = (dayNow.getMonth() + 1).toString().padStart(2, '0');
+  const day = dayNow.getDate().toString().padStart(2, '0');
+  const defaultDate = `${year}-${month}-${day}`;
+
+  //day time
+  function getStartDay(e){
+    setNewDataUpdate(prevData => ({
+      ...prevData,
+      start_date:`${e.$y}-${e.$M+1}-${e.$D}`
+    }));
+  }
+  function getEndDay(e){
+    setNewDataUpdate(prevData => ({
+      ...prevData,
+      end_date:`${e.$y}-${e.$M+1}-${e.$D}`
+    }));
+  }
     const handleFormSubmit = async (course_id, e) => {
         e.preventDefault();
         const access_token = localStorage.getItem("access_token");
-        const formData = new FormData();
-        for (const key in data_update) {
-            formData.append(key, data_update[key]);
-        }
-        const file = e.target.elements.avatar.files[0];
-        if (file) {
-            formData.append('avatar', file);
-        }
-        if(isUserPasswordValid!=""){
-            data.data.error("Invalid password")
-            return
-        }
-        const result=await apis.userApi.update(formData,{access_token, user_id});
+        const result=await apis.courseApi.update(access_token,{formData:newDataUpdate, course_id});
         if(result.status==200){
-            data.data.success("Update info success")
-            dispatch(setUpdateStatus(false));
-            data.data.handleGetUserList()
-            setAvatarUrl(null)
+            data.data.success("Update course success")
+            data.data.handleGetCourseList()
+            data.data.setOpen(false)
         }else{
             data.data.error(result?.message)
         }
     };
-    const [avatarUrl,setAvatarUrl] =useState(null)
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setAvatarUrl(imageUrl);
-        }
-    };
     const handleOk = () => {
-        dispatch(setUpdateStatus(false));
-        setAvatarUrl(null)
+      data.data.setOpen(false)
     };
     const handleCancel = () => {
-        dispatch(setUpdateStatus(false));
-        setAvatarUrl(null)
+      data.data.setOpen(false)
     };
-    const {data_update} = useSelector((state) => state.courseSlice);
-    console.log("data_update",data_update);
     function setFormData(e) {
         const { name, value } = e.target;
-        dispatch(setDataUpdate({...data_update,[name]: value}))
+        setNewDataUpdate(prevData => ({
+          ...prevData,
+          [name]: value 
+      }));
     }
   return (
     <Modal
       title="UPDATE COURSE INFORMATION"
-      open={update_status}
+      open={data.data.open}
       onOk={handleOk}
       onCancel={handleCancel}
     >
       <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
         <form
           onSubmit={(e) => {
-            handleFormSubmit(course.id, e);
+            handleFormSubmit(newDataUpdate.id, e);
           }}
         >
           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
@@ -85,7 +89,8 @@ export default function UpdateCourse(data) {
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Name of course"
                 required=""
-                value={data_update.name}
+                value={newDataUpdate.name}
+                onChange={(e)=>{setFormData(e)}}
               />
             </div>
             <div className="w-full">
@@ -100,8 +105,8 @@ export default function UpdateCourse(data) {
                 name="duration"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Course duration"
-                value={data_update.duration}
-
+                value={newDataUpdate.duration}
+                onChange={(e)=>{setFormData(e)}}
               />
             </div>
 
@@ -112,18 +117,12 @@ export default function UpdateCourse(data) {
               >
                 Start date
               </label>
-              {/* <input
-                type="text"
-                name="start_date"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="YYYY-MM-DD"
-                value={data_update.start_date}
-              /> */}
-               <DatePicker
-    defaultValue={dayjs('2019-09-03', dateFormat)}
-    minDate={dayjs('2019-08-01', dateFormat)}
-    maxDate={dayjs('2020-10-31', dateFormat)}
-  />
+              {newDataUpdate.start_date?<DatePicker
+                defaultValue={dayjs(newDataUpdate.start_date, dateFormat)}
+                minDate={dayjs('1990-08-01', dateFormat)}
+                maxDate={dayjs('2100-10-31', dateFormat)}
+                onChange={(e)=>{getStartDay(e)}}
+              />:<></>}
             </div>
 
             <div>
@@ -133,14 +132,12 @@ export default function UpdateCourse(data) {
               >
                 End date
               </label>
-              <input
-                type="text"
-                name="end_date"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="YYYY-MM-DD"
-                value={data_update.end_date}
-
-              />
+              {newDataUpdate.end_date?<DatePicker
+                defaultValue={dayjs(newDataUpdate.end_date, dateFormat)}
+                minDate={dayjs('1990-08-01', dateFormat)}
+                maxDate={dayjs('2100-10-31', dateFormat)}
+                onChange={(e)=>{getEndDay(e)}}
+              />:<></>}
             </div>
           </div>
 
@@ -157,7 +154,8 @@ export default function UpdateCourse(data) {
               rows={8}
               className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
               placeholder="Course description"
-              value={data_update.description}
+              value={newDataUpdate.description}
+              onChange={(e)=>{setFormData(e)}}
             />
           </div>
 

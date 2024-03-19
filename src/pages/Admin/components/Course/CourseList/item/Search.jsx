@@ -11,11 +11,12 @@ export default function Search() {
   async function handleSearch(e){
     const keywordValue = e.target.elements.keyword.value;
     dispatch(setSeachValue({value_search:keywordValue}));
-    const searchList = await apis.userApi.search(access_token,keywordValue,0,take);
+    const searchList = await apis.courseApi.search(access_token,keywordValue,0,take);
+    console.log("searchList",searchList);
     if (searchList.status==200) {
     if(keywordValue){
       dispatch(setSeachStatus({is_search:true}));
-      dispatch(list(searchList.data.users));
+      dispatch(list(searchList.data.data));
       dispatch(pagination({total:searchList.data.total,skip:0}));
     }else{
       dispatch(setSeachStatus({is_search:false}));

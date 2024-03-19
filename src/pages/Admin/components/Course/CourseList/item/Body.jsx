@@ -1,37 +1,39 @@
 import React from 'react'
-import { Button, Modal } from "antd";
+import { Button, Modal ,message} from "antd";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { setDataUpdate,setUpdateStatus  } from '../../../../../../redux/slices/course-slice';
 import UpdateCourse from './UpdateCourse';
-
-
+import apis from '../../../../../../services/apis/modules';
+import { list,pagination } from '../../../../../../redux/slices/course-slice';
+import AddCourse from './AddCourse';
 
 export default function Body() {
   const dispatch = useDispatch()
-  const {skip,take,total,is_search,courseList} = useSelector((state) => state.courseSlice);
-  async function handleGetUserList() {
-    const getList = await apis.userApi.get_all(access_token,skip,take);
+  const access_token = localStorage.getItem("access_token");
+  const {skip,take,total,is_search,courseList,value_search} = useSelector((state) => state.courseSlice);
+  async function handleGetCourseList() {
+    const getList = await apis.courseApi.get_all(access_token,skip,take);
     if (getList.status==200) {
     dispatch(list(getList.data.data));
     dispatch(pagination({ total: Math.round(getList.data.total) }));
     }
   }
-  async function handleSearchUserList() {
+  async function handleSearchCourseList() {
       const searchList = await apis.courseApi.search(access_token,value_search,skip,take);
+      console.log("searchList",searchList);
       if (searchList.status==200) {
-          dispatch(list(searchList.data.users));
+          dispatch(list(searchList.data.data));
           dispatch(pagination({total:searchList.data.total}));
       }
   }
-  // useEffect(()=>{
-  //     if(!is_search){
-  //         handleGetCourseList({})
-  //     }else{
-  //         handleSearchCourseList({})
-  //     }
-  // },[skip,take,total,is_search])
+  useEffect(()=>{
+      if(!is_search){
+          handleGetCourseList({})
+      }else{
+          handleSearchCourseList({})
+      }
+  },[skip,take,total,is_search])
 
 
   //Detail
@@ -47,18 +49,45 @@ export default function Body() {
       setShowDetail(false);
   };
   //Update
+  const [dataUpdate,setDataUpdate]=useState({})
+  const [openModelUpdate,setOpenModelUpdate]=useState(false)
   const handleOpenModalUpdate = (data) => {
-    console.log("data111111",data);
-      dispatch(setDataUpdate({...data,role:data.role?.[0]?.role_name}));
-      dispatch(setUpdateStatus(true));
+      setOpenModelUpdate(true)
+
+      let start_date = data.start_date.slice(0, 10);
+      let end_date = data.end_date.slice(0, 10);
+      setDataUpdate({...data,start_date,end_date})
   };
+   //model add course
+   const [openFormAddNewCourse,setOpenFormAddNewCourse]=useState(false);
 
-
-
+    //Message
+    const [messageApi, contextHolder] = message.useMessage();
+    const success = (message) => {
+        messageApi.open({
+          type: 'success',
+          content: message,
+        });
+    };
+    const error = (message) => {
+      messageApi.open({
+          type: 'error',
+          content: message,
+      });
+    }
 
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+    {contextHolder}
+    <button 
+            onClick={() => setOpenFormAddNewCourse(true)}
+            style={{float: "right" ,background:"#0099FF",
+            width:"200px",
+            height:"50px",
+            margin:"20px",
+            borderRadius:"10px"
+            }}>Add New Course</button>
     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
       <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
@@ -134,7 +163,9 @@ export default function Body() {
                       <EditOutlined />
                     </span>
                   </Button>
-                    {(<UpdateCourse></UpdateCourse>)}
+                    {(<UpdateCourse data={{dataUpdate,open:openModelUpdate,setOpen:setOpenModelUpdate,
+                    success,error,handleGetCourseList
+                    }}></UpdateCourse>)}
                   <Button
                     type="dashed"
                     dark
@@ -151,6 +182,7 @@ export default function Body() {
         )}
       </tbody>
     </table>
+    <AddCourse data={{open:openFormAddNewCourse,setOpen:setOpenFormAddNewCourse,getData:handleGetCourseList}}></AddCourse>
   </div>
   )
 }

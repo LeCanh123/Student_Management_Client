@@ -50,7 +50,6 @@ export default function UpdateUser(data) {
         setAvatarUrl(null)
     };
     const {data_update} = useSelector((state) => state.userSlice);
-    console.log("data_update",data_update);
     function setFormData(e) {
         const { name, value } = e.target;
         dispatch(setDataUpdate({...data_update,[name]: value}))

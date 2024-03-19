@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pagination } from 'antd';
 import { useSelector, useDispatch } from 'react-redux'
-import { pagination } from '../../../../../../redux/slices/user-slice';
+import { pagination } from '../../../../../../redux/slices/course-slice';
 
 export default function PaginationPage() {
   const dispatch = useDispatch()

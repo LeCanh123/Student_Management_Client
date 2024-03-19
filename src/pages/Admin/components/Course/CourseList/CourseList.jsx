@@ -14,16 +14,16 @@ const CourseList = () => {
   const [allowAccess,setAllowAccess]=useState(false)
   const access_token = localStorage.getItem("access_token");
 
-  useEffect(()=>{
-    async function handleGetCourseList() {
-      const getCourseList = await apis.courseApi.find_all(access_token);
-      console.log("getCourseList",getCourseList);
-      if (getCourseList.status==200) {
-        dispatch(list(getCourseList.data));
-      }
-    }
-    handleGetCourseList()
-  },[])
+  // useEffect(()=>{
+  //   async function handleGetCourseList() {
+  //     const getCourseList = await apis.courseApi.find_all(access_token);
+  //     console.log("getCourseList",getCourseList);
+  //     if (getCourseList.status==200) {
+  //       dispatch(list(getCourseList.data));
+  //     }
+  //   }
+  //   handleGetCourseList()
+  // },[])
  
 
   

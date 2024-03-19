@@ -140,7 +140,7 @@ const Admin = () => {
       case "sub1":
         return <CourseList/>;
       default:
-        return  <UserList />;
+        return  <CourseList />;
     }
   };
   const [collapsed, setCollapsed] = useState(false);

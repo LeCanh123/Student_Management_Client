@@ -10,10 +10,6 @@ const initialState = {
     //search
     is_search:false,
     value_search:"",
-
-    //update
-    update_status:false,
-    data_update:{}
 }
 
 export const courseSlice = createSlice({
@@ -40,14 +36,7 @@ export const courseSlice = createSlice({
     setSeachValue:(state,action) => {
       state.value_search = action.payload.value_search
     },
-    setDataUpdate:(state,action) => {
-      console.log("vaof r");
-      state.data_update = action.payload
-    },
-    setUpdateStatus:(state,action) => {
-      state.update_status = action.payload
-    },
   },
 })
-export const { info,list,pagination,setSeachStatus,setSeachValue,setDataUpdate,setUpdateStatus } = courseSlice.actions
+export const { info,list,pagination,setSeachStatus,setSeachValue } = courseSlice.actions
 export default courseSlice.reducer

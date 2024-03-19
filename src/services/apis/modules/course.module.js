@@ -27,33 +27,21 @@ export const courseModule= {
       });
   },
 
-  update: async (access_token, course_id, form_data) => {
+  update: async (access_token, data) => {
+    console.log("dataa");
     return await axios
       .put(
-        import.meta.env.VITE_SERVER_HOST + "/api/course/" + course_id,
-        form_data,
+        import.meta.env.VITE_SERVER_HOST + "/api/course/" + data.course_id,
+        data.formData,
         {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${access_token}`,
           },
         }
       )
-      .then((response) => {
-        if (response.status === 200) {
-          return {
-            status: true,
-            message: "Successfully updated course information",
-            data: response.data,
-          };
-        }
-      })
+      .then((response) => response)
       .catch((error) => {
-        return {
-          status: false,
-          message: "Update failed course information",
-          data: null,
-        };
+          return error.response.data
       });
   },
 
@@ -95,9 +83,9 @@ export const courseModule= {
       });
   },
 
-  find_all: async (access_token) => {
+  get_all: async (access_token,skip,take) => {
     return await axios
-      .get(import.meta.env.VITE_SERVER_HOST + "/api/course",
+      .get(import.meta.env.VITE_SERVER_HOST + `/api/course?skip=${skip}&take=${take}`,
       {
         headers: {
           Authorization: `Bearer ${access_token}` 
@@ -114,20 +102,19 @@ export const courseModule= {
       });
   },
 
-  search: async (keyword) => {
+  search: async (access_token,keyword,skip,take) => {
     return await axios
       .get(
         import.meta.env.VITE_SERVER_HOST +
           "/api/course/search?keyword=" +
-          keyword
-      )
-      .then((response) => {
-        return {
-          status: true,
-          message: "Search for a successful course",
-          data: response.data,
-        };
+          keyword+`&skip=${skip}&take=${take}`
+      ,{
+          headers: {
+            Authorization: `Bearer ${access_token}` 
+          }
       })
+      .then((response) => response
+      )
       .catch((error) => {
         return {
           status: false,

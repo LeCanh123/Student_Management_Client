@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { GiTeacher } from "react-icons/gi";
 import {
+  UserOutlined,
   ApartmentOutlined,
   LogoutOutlined,
   ReadOutlined,
@@ -13,9 +14,7 @@ import {
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import CreateCourse from "./components/Course/CreateCourse/CreateCourse";
 import CourseList from "./components/Course/CourseList/CourseList";
-import CreateClass from "./components/Class/CreateClass/CreateClass";
 import ClassList from "./components/Class/ClassList/ClassList";
-import CreateTeacher from "./components/Teacher/CreateTeacher/CreateTeacher";
 import TeacherList from "./components/Teacher/TeacherList/TeacherList";
 import UserList from "./components/User/UserList/UserList";
 
@@ -31,7 +30,7 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  getItem("User", "sub0", <ReadOutlined />, 
+  getItem("User", "sub0", <UserOutlined />, 
   // [
     // getItem("Create User", "11", <PlusOutlined />),
     // getItem("User list", "12", <UnorderedListOutlined />),
@@ -50,10 +49,12 @@ const items = [
     getItem("Class list", "4", <UnorderedListOutlined />),
   ]),
 
-  getItem("Teacher", "sub3", <GiTeacher />, [
-    getItem("Create teacher", "5", <PlusOutlined />),
-    getItem("Teacher list", "6", <UnorderedListOutlined />),
-  ]),
+  getItem("Teacher", "sub3", <GiTeacher />, 
+  // [
+  //   // getItem("Create teacher", "5", <PlusOutlined />),
+  //   // getItem("Teacher list", "6", <UnorderedListOutlined />),
+  // ]
+  ),
 
   getItem("Setting", "sub4", <SettingOutlined />, [
     getItem("Profile", "7", <ProfileOutlined />),
@@ -121,7 +122,7 @@ const Admin = () => {
       case "2":
         return <CourseList />;
       case "3":
-        return <CreateClass />;
+        return <></>;
       case "4":
         return <ClassList />;
       case "5":
@@ -133,14 +134,16 @@ const Admin = () => {
         return <>Waiting logout</>
       case "11":
         return <>User</>;
-      case "12":
-        return <UserList/>;
+      // case "12":
+      //   return <UserList/>;
       case "sub0":
         return <UserList/>;
       case "sub1":
         return <CourseList/>;
+      case "sub3":
+        return <TeacherList/>;
       default:
-        return  <CourseList />;
+        return  <TeacherList />;
     }
   };
   const [collapsed, setCollapsed] = useState(false);

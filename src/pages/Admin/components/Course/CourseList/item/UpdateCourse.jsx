@@ -11,10 +11,9 @@ export default function UpdateCourse(data) {
   //data update
   const {dataUpdate}=data.data;
   const [newDataUpdate,setNewDataUpdate]=useState({start_date:"2024-03-04"});
-console.log("newDataUpdate",newDataUpdate);
-useEffect(() => {
-  setNewDataUpdate(dataUpdate);
-}, [dataUpdate]);
+  useEffect(() => {
+    setNewDataUpdate(dataUpdate);
+  }, [dataUpdate]);
   //day config
   dayjs.extend(customParseFormat);
   const dateFormat = 'YYYY-MM-DD';

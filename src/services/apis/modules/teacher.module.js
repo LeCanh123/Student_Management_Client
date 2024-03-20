@@ -1,56 +1,76 @@
 import axios from "axios";
 
-export default {
+export const teacherModule= {
   create: async (access_token, form_data) => {
+    console.log("form_data",form_data);
     return await axios
-      .post(import.meta.env.VITE_SERVER_HOST + "api/teachers", form_data, {
+      .post(import.meta.env.VITE_SERVER_HOST + "/api/teachers", form_data, {
         headers: {
-          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${access_token}`,
         },
       })
-      .then((response) => {
-        if (response.status === 200) {
-          return {
-            status: true,
-            message: "The teacher has been created successfully",
-            data: response.data,
-          };
-        }
+      .then((response) => response)
+      .catch((error) => {
+        return error.response.data
+      });
+  },
+
+  search: async (access_token,keyword,skip,take) => {
+    return await axios
+      .get(
+        import.meta.env.VITE_SERVER_HOST +
+          "/api/teachers/search?keyword=" +
+          keyword+`&skip=${skip}&take=${take}`
+      ,{
+          headers: {
+            Authorization: `Bearer ${access_token}` 
+          }
       })
+      .then((response) => response
+      )
       .catch((error) => {
         return {
           status: false,
-          message: "Invalid data. Please check and try again",
+          message: "Search teacher failed",
+          data: null,
         };
       });
   },
 
-  update: async (access_token, teacher_id, form_data) => {
+  get_all: async (access_token,skip,take) => {
+    return await axios
+      .get(import.meta.env.VITE_SERVER_HOST + `/api/teachers?skip=${skip}&take=${take}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}` 
+        }
+      }
+      )
+      .then((response) => response)
+      .catch((error) => {
+        return {
+          status: false,
+          message: "Get teachers list failed",
+          data: null,
+        };
+      });
+  },
+
+  update: async (access_token, data) => {
     return await axios
       .put(
-        import.meta.env.VITE_SERVER_HOST + "api/teachers" + teacher_id,
-        form_data,
+        import.meta.env.VITE_SERVER_HOST + "/api/teachers/" + data.teacher_id,
+        data.newDataUpdate,
         {
           headers: {
-            "Content-Type": "muiltipart/form-data",
             Authorization: `Bearer ${access_token}`,
           },
         }
       )
-      .then((response) => {
-        if (response.status === 200) {
-          return {
-            status: true,
-            message: "Teacher information has been updated successfully",
-          };
-        }
-      })
+      .then((response) => response)
       .catch((error) => {
-        return {
-          status: false,
-          message: "Invalid data. Please check and try again",
-        };
+        console.log("error",error);
+       return  error?.response?.data
       });
   },
 

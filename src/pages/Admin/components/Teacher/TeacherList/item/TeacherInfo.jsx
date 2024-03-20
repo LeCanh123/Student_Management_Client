@@ -1,8 +1,8 @@
 import React from 'react'
 import {Modal } from 'antd';
 
-export default function CourseInfo(data) {
-    const {dataDetail}=data.data
+export default function TeacherInfo(data) {
+    const {dataDetail}=data.data 
     const handleOk = () => {
         data.data.setOpen(false);
     };
@@ -12,7 +12,7 @@ export default function CourseInfo(data) {
   return (
 
     <Modal
-    title="COURSE DETAILS"
+    title="TEACHER DETAILS"
     open={data.data.open}
     onOk={handleOk}
     onCancel={handleCancel}
@@ -36,60 +36,71 @@ export default function CourseInfo(data) {
         required=""
         >{dataDetail.id}</span>
     </div>
-{/* Course Name */}
+{/* Teacher Name */}
     <div className="sm:col-span-2">
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        Course Name
+        Teacher Name
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
         >{dataDetail.name}</span>
     </div>
-{/* Duration */}
+{/* Dob (Birthday) */}
     <div className="sm:col-span-2">
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        Duration
+        Dob (Birthday)
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.duration}</span>
+        >{dataDetail.dob?.slice(0,10)}</span>
     </div>
-{/* Start Date */}
+{/* Email */}
     <div className="w-full">
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        Start Date
+        Email
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.start_date?.slice(0,10)}</span>
+        >{dataDetail.email}</span>
     </div>
-{/* End Date */}
+{/* Phone */}
     <div>
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        End Date
+        Phone
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.end_date?.slice(0,10)}</span>
+        >{dataDetail.phone}</span>
     </div>
-{/* Description */}
+{/* Status */}
     <div>
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        Description
+        Status
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.description}</span>
+        >{dataDetail.status?"true":"false"}</span>
+    </div>
+{/* Address */}
+    <div>
+        <label
+        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >
+        Address
+        </label>
+        <span
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+        >{dataDetail.address}</span>
     </div>
     </div>
     </form>

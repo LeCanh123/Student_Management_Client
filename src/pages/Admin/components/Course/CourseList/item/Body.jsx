@@ -22,7 +22,6 @@ export default function Body() {
   }
   async function handleSearchCourseList() {
       const searchList = await apis.courseApi.search(access_token,value_search,skip,take);
-      console.log("searchList",searchList);
       if (searchList.status==200) {
           dispatch(list(searchList.data.data));
           dispatch(pagination({total:searchList.data.total}));

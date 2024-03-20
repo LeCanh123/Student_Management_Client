@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 
-export default function AddCourse(data) {
+export default function AddTeacher(data) {
     const handleOk = () => {
         data.data.setOpen(false)
     };
@@ -28,25 +28,33 @@ export default function AddCourse(data) {
 
 
     //Data submit
-    const [newCourseData,setNewCourseData] = useState({start_date:defaultDate,end_date:defaultDate});
-    //Start date + end date
-    function getStartDay(e){
-        setNewCourseData(prevData => ({
+    const [newTeacherData,setNewTeacherData] = useState({dob:defaultDate});
+    //Birth day
+    function getDobDay(e){
+        setNewTeacherData(prevData => ({
           ...prevData,
-          start_date:`${e.$y}-${e.$M+1}-${e.$D}`
+          dob:`${e.$y}-${e.$M+1}-${e.$D}`
         }));
-    }
-    function getEndDay(e){
-    setNewCourseData(prevData => ({
-        ...prevData,
-        end_date:`${e.$y}-${e.$M+1}-${e.$D}`
-    }));
     }
 
     //set form
     function setFormData(e) {
         const { name, value } = e.target;
-        setNewCourseData(prevState => ({
+        if(name=="email"){
+            if(!isValidEmail(value)){
+                setIsUserEmailvalid("Invalid email")
+            }else{
+                setIsUserEmailvalid("")
+            }
+        }
+        if(name=="phone"){
+            if(!isValidPhone(value)){
+                setIsUserPhoneValid("Invalid phone number")
+            }else{
+                setIsUserPhoneValid("")
+            }
+        }
+        setNewTeacherData(prevState => ({
             ...prevState,
             [name]: value
         }));
@@ -55,27 +63,42 @@ export default function AddCourse(data) {
     async function handleFormSubmit(e){
         e.preventDefault() 
         const access_token = localStorage.getItem("access_token");
-
-        if(newCourseData.name&&newCourseData.start_date&&
-            newCourseData.end_date
+        if(newTeacherData.name&&newTeacherData.dob&&
+            newTeacherData.email,newTeacherData.phone,
+            newTeacherData.address
         ){
-            let createNewCourse=await apis.courseApi.create(access_token,newCourseData);
-            if(createNewCourse.status==201){
+            let createNewTeacher=await apis.teacherApi.create(access_token,newTeacherData);
+            console.log("createNewTeacher",createNewTeacher);
+            if(createNewTeacher.status==201){
                 data.data.setOpen(false);
-                data.data.success(createNewCourse.data?.message)
+                data.data.success(createNewTeacher.data?.message)
+                data.data.getData()
             }else{
-                data.data.error(createNewCourse.message)
+                data.data.error(createNewTeacher.message)
             }
         }else{
             data.data.error("Please fill in all fields")
         }
   
     }
-    //Message
+    
+    
+    //email
+    const [isUserEmailvalid,setIsUserEmailvalid]=useState('')
+    function isValidEmail(email) {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    }
+    //phone
+    const [isUserPhoneValid,setIsUserPhoneValid]=useState('')
+    function isValidPhone(phone) {
+        const regex = /^\d{6,15}$/;
+        return regex.test(phone);
+    }
   return (
     
     <Modal
-    title="ADD NEW COURSE"
+    title="ADD NEW TEACHER"
     open={data.data.open}
     onOk={handleOk}
     onCancel={handleCancel}
@@ -83,21 +106,21 @@ export default function AddCourse(data) {
     <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
         <form onSubmit={(e) => {handleFormSubmit(e);}}>
             <div className="grid gap-4 sm:grid-cols-1 sm:gap-6">
-{/* Name + Duration*/}
+{/* Name + Birthday*/}
                 <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                         <label
                             htmlFor="name"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            Course Name
+                            Teacher Name
                         </label>
                         <input
                             type="text"
                             name="name"
                             id='name'
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Name of course"
+                            placeholder="Name of teacher"
                             required=""
                             onChange={(e)=>{ setFormData(e)}}
                         />
@@ -105,79 +128,85 @@ export default function AddCourse(data) {
                     </div>
                     <div className="sm:col-span-2">
                         <label
-                            htmlFor="duration"
+                            htmlFor="dob"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            Duration
+                            Dob (Birth Day)
                         </label>
-                        <input
-                            type="number"
-                            name="duration"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Duration"
-                            required=""
-                            onChange={(e)=>{ setFormData(e)}}
+                        <DatePicker
+                        className="w-full"
+                        defaultValue={dayjs(defaultDate, dateFormat)}
+                        minDate={dayjs('1990-08-01', dateFormat)}
+                        maxDate={dayjs('2100-10-31', dateFormat)}
+                        onChange={(e)=>{getDobDay(e)}}
                         />
                         {/* {isUserNamevalid?<div style={{color:"red"}}>* {isUserNamevalid}</div>:null} */}
                     </div>
                 </div>
-{/* start date+ end date */}
+{/* Email + Phone */}
                 <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="w-full">
+                <div className="sm:col-span-2">
                         <label
                             htmlFor="email"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            Start date
+                            Email
                         </label>
-                        {<DatePicker
-                        className="w-full"
-                        defaultValue={dayjs(defaultDate, dateFormat)}
-                        minDate={dayjs('1990-08-01', dateFormat)}
-                        maxDate={dayjs('2100-10-31', dateFormat)}
-                        onChange={(e)=>{getStartDay(e)}}
-                        />}
+                        <input
+                            type="email"
+                            name="email"
+                            id='email'
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Email"
+                            required=""
+                            onChange={(e)=>{ setFormData(e)}}
+                        />
+                        {isUserEmailvalid?<div style={{color:"red"}}>* {isUserEmailvalid}</div>:null}
                     </div>
                     <div className="sm:col-span-2 relative">
                         <label
-                            htmlFor="enddate"
+                            htmlFor="phone"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            End date
+                            Phone
                         </label>
-                        {<DatePicker
-                        className="w-full"
-                        defaultValue={dayjs(defaultDate, dateFormat)}
-                        minDate={dayjs('1990-08-01', dateFormat)}
-                        maxDate={dayjs('2100-10-31', dateFormat)}
-                        onChange={(e)=>{getEndDay(e)}}
-                    />}
+                        <input
+                            type="number"
+                            name="phone"
+                            id='email'
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Phone"
+                            required=""
+                            onChange={(e)=>{ setFormData(e)}}
+                        />
+                        {isUserPhoneValid?<div style={{color:"red"}}>* {isUserPhoneValid}</div>:null}
                     </div>
                 </div>
-{/* Description */}                
+{/* Address */}                
                 <div className="sm:col-span-2">
                     <label
-                        htmlFor="description"
+                        htmlFor="address"
                         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                        Description
+                        Address
                     </label>
-                    <textarea 
+                    <input 
                         type="text"
-                        name="description"
+                        name="address"
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block 
                         w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Course description"
+                        placeholder="Address"
                         required=""
                         onChange={(e) => setFormData(e)}
                     />
                 </div>
             </div>
+{/* Submit */}
             <button
                 type="submit"
                 className="mt-6 w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
             >
-                Create Course
+                Add New Teacher
             </button>
         </form>
     </div>

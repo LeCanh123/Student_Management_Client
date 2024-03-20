@@ -5,25 +5,12 @@ export const courseModule= {
     return await axios
       .post(import.meta.env.VITE_SERVER_HOST + "/api/course", form_data, {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${access_token}`,
         },
       })
-      .then((response) => {
-        if (response.status === 200) {
-          return {
-            status: true,
-            message: "The course has been created successfully.",
-            data: response.data,
-          };
-        }
-      })
+      .then((response) => response)
       .catch((error) => {
-        return {
-          status: false,
-          message: "Invalid data. Please check and try again.",
-          data: null,
-        };
+        return error.response.data
       });
   },
 

@@ -11,36 +11,59 @@ export default function UpdateCourse(data) {
   //data update
   const {dataUpdate}=data.data;
   const [newDataUpdate,setNewDataUpdate]=useState({start_date:"2024-03-04"});
-
+console.log("newDataUpdate",newDataUpdate);
 useEffect(() => {
   setNewDataUpdate(dataUpdate);
 }, [dataUpdate]);
   //day config
   dayjs.extend(customParseFormat);
   const dateFormat = 'YYYY-MM-DD';
-  const dayNow= new Date();
-  const year = dayNow.getFullYear();
-  const month = (dayNow.getMonth() + 1).toString().padStart(2, '0');
-  const day = dayNow.getDate().toString().padStart(2, '0');
-  const defaultDate = `${year}-${month}-${day}`;
+  
 
   //day time
   function getStartDay(e){
+    const startDate = new Date(`${e.$y}-${e.$M+1}-${e.$D}`)
+    startDate.setDate(startDate.getDate() + 1);
     setNewDataUpdate(prevData => ({
       ...prevData,
-      start_date:`${e.$y}-${e.$M+1}-${e.$D}`
+      start_date:startDate
     }));
   }
   function getEndDay(e){
+    const endDate = new Date(`${e.$y}-${e.$M+1}-${e.$D}`)
+    endDate.setDate(endDate.getDate() + 1);
     setNewDataUpdate(prevData => ({
       ...prevData,
-      end_date:`${e.$y}-${e.$M+1}-${e.$D}`
+      end_date:endDate
     }));
   }
+  function formatDate(date) {
+    if(date.length<11){
+      return date
+    }else{
+      const previousDate = new Date(date);
+      previousDate.setDate(previousDate.getDate() - 1);
+      const year = previousDate.getFullYear();
+      const month = String(previousDate.getMonth() + 1).padStart(2, '0');
+      const day = String(previousDate.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+  }
+
+
+  function convertDay(e){
+    const newDate = new Date(e)
+    newDate.setDate(newDate.getDate());
+    return newDate
+  }
+
     const handleFormSubmit = async (course_id, e) => {
         e.preventDefault();
         const access_token = localStorage.getItem("access_token");
-        const result=await apis.courseApi.update(access_token,{formData:newDataUpdate, course_id});
+        const result=await apis.courseApi.update(access_token,{formData:{...newDataUpdate,
+          start_date:newDataUpdate.start_date?.length>11?newDataUpdate.start_date:convertDay(newDataUpdate.start_date),
+          end_date:newDataUpdate.end_date?.length>11?newDataUpdate.end_date:convertDay(newDataUpdate.end_date),
+        }, course_id});
         if(result.status==200){
             data.data.success("Update course success")
             data.data.handleGetCourseList()
@@ -118,7 +141,8 @@ useEffect(() => {
                 Start date
               </label>
               {newDataUpdate.start_date?<DatePicker
-                defaultValue={dayjs(newDataUpdate.start_date, dateFormat)}
+                // defaultValue={dayjs('1981-01-01', dateFormat)}
+                value={dayjs(formatDate(newDataUpdate.start_date), dateFormat)}
                 minDate={dayjs('1990-08-01', dateFormat)}
                 maxDate={dayjs('2100-10-31', dateFormat)}
                 onChange={(e)=>{getStartDay(e)}}
@@ -133,7 +157,8 @@ useEffect(() => {
                 End date
               </label>
               {newDataUpdate.end_date?<DatePicker
-                defaultValue={dayjs(newDataUpdate.end_date, dateFormat)}
+                // defaultValue={dayjs('1981-01-01', dateFormat)}
+                value={dayjs(formatDate(newDataUpdate.end_date), dateFormat)}
                 minDate={dayjs('1990-08-01', dateFormat)}
                 maxDate={dayjs('2100-10-31', dateFormat)}
                 onChange={(e)=>{getEndDay(e)}}

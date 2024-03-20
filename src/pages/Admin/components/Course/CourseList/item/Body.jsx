@@ -7,6 +7,7 @@ import UpdateCourse from './UpdateCourse';
 import apis from '../../../../../../services/apis/modules';
 import { list,pagination } from '../../../../../../redux/slices/course-slice';
 import AddCourse from './AddCourse';
+import CourseInfo from './CourseInfo';
 
 export default function Body() {
   const dispatch = useDispatch()
@@ -37,16 +38,10 @@ export default function Body() {
 
 
   //Detail
-  const [showDetail, setShowDetail] = useState(false);
+  const [dataDetail, setDataDetail] = useState({});
   const handleShowDetail = (data) => {
-      setShowDetail(true);
-      dispatch(info(data))
-  };
-  const handleOk = () => {
-      setShowDetail(false);
-  };
-  const handleCancel = () => {
-      setShowDetail(false);
+    setOpenModelShowDetail(true)
+    setDataDetail(data)
   };
   //Update
   const [dataUpdate,setDataUpdate]=useState({})
@@ -58,10 +53,14 @@ export default function Body() {
       let end_date = data.end_date.slice(0, 10);
       setDataUpdate({...data,start_date,end_date})
   };
-   //model add course
-   const [openFormAddNewCourse,setOpenFormAddNewCourse]=useState(false);
+  //Model add course
+  const [openFormAddNewCourse,setOpenFormAddNewCourse]=useState(false);
 
-    //Message
+  //Model show detail
+  const [openModelShowDetail,setOpenModelShowDetail]=useState(false)
+
+
+  //Message
     const [messageApi, contextHolder] = message.useMessage();
     const success = (message) => {
         messageApi.open({
@@ -129,31 +128,20 @@ export default function Body() {
                 {course.name}
               </th>
               <td className="px-6 py-4">{course.duration}</td>
-              <td className="px-6 py-4">{course.start_date}</td>
-              <td className="px-6 py-4">{course.end_date}</td>
+              <td className="px-6 py-4">{course.start_date?.slice(0,10)}</td>
+              <td className="px-6 py-4">{course.end_date?.slice(0,10)}</td>
               <td className="px-6 py-4">{course.description}</td>
               <td className="px-6 py-4">
                 <div className="flex justify-between">
                   <Button type="dashed" dark 
-                  // onClick={handleShowDetail}
+                  onClick={()=>handleShowDetail(course)}
                   >
                     Detail
                   </Button>
-                  {showDetail && (
-                    <Modal
-                      title="COURSE DETAILS"
-                      open={showDetail}
-                      onOk={handleOk}
-                      onCancel={handleCancel}
-                    >
-                      <p>ID: {course.id}</p>
-                      <p>Name: {course.name}</p>
-                      <p>Duration: {course.duration}</p>
-                      <p>Start date: {course.start_date}</p>
-                      <p>End date: {course.end_date}</p>
-                      <p>Description: {course.description}</p>
-                    </Modal>
-                  )}
+                    <CourseInfo data={{open:openModelShowDetail,
+                    setOpen:setOpenModelShowDetail,
+                    dataDetail,
+                    }}></CourseInfo>
                   <Button
                     type="dashed"
                     dark
@@ -182,7 +170,9 @@ export default function Body() {
         )}
       </tbody>
     </table>
-    <AddCourse data={{open:openFormAddNewCourse,setOpen:setOpenFormAddNewCourse,getData:handleGetCourseList}}></AddCourse>
+    <AddCourse data={{open:openFormAddNewCourse,setOpen:setOpenFormAddNewCourse,getData:handleGetCourseList,
+    success,error
+    }}></AddCourse>
   </div>
   )
 }

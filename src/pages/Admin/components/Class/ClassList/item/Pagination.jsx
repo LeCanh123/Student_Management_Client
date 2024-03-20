@@ -1,11 +1,11 @@
 import React from 'react';
 import { Pagination } from 'antd';
 import { useSelector, useDispatch } from 'react-redux'
-import { pagination } from '../../../../../../redux/slices/teacher-slice';
+import { pagination } from '../../../../../../redux/slices/class-slice';
 
 export default function PaginationPage() {
   const dispatch = useDispatch()
-  const {skip,take,total} = useSelector((state) => state.teacherSlice);
+  const {skip,take,total} = useSelector((state) => state.classSlice);
   const take_number=Number(take)
   return (
     <div>

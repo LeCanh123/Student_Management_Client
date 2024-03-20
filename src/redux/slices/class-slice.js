@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    teacherList:[],
-    teacherInfo:{name:"canh"},
+    classList:[],
+    classInfo:{name:"canh"},
     skip:0,
     take:import.meta.env.VITE_TAKE,
     total:0,
@@ -12,15 +12,15 @@ const initialState = {
     value_search:"",
 }
 
-export const teacherSlice = createSlice({
-  name: 'teacher',
+export const classSlice = createSlice({
+  name: 'class',
   initialState,
   reducers: {
     info: (state,action) => {
-      state.teacherInfo = action.payload
+      state.classInfo = action.payload
     },
     list: (state,action) => {
-        state.teacherList = action.payload
+        state.classList = action.payload
     },
     pagination: (state,action) => {
       if(action.payload.skip!=undefined){
@@ -38,5 +38,5 @@ export const teacherSlice = createSlice({
     },
   },
 })
-export const { info,list,pagination,setSeachStatus,setSeachValue } = teacherSlice.actions
-export default teacherSlice.reducer
+export const { info,list,pagination,setSeachStatus,setSeachValue } = classSlice.actions
+export default classSlice.reducer

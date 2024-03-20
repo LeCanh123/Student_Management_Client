@@ -3,6 +3,7 @@ import { GiTeacher } from "react-icons/gi";
 import {
   UserOutlined,
   ApartmentOutlined,
+  UsergroupAddOutlined,
   LogoutOutlined,
   ReadOutlined,
   LockOutlined,
@@ -17,7 +18,8 @@ import CourseList from "./components/Course/CourseList/CourseList";
 import ClassList from "./components/Class/ClassList/ClassList";
 import TeacherList from "./components/Teacher/TeacherList/TeacherList";
 import UserList from "./components/User/UserList/UserList";
-
+import StudentList from "./components/Student/StudentList/StudentList";
+import ModuleCourseList from "./components/ModuleCourse/ModuleCourseList/ModuleCourseList";
 const { Header, Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -44,10 +46,19 @@ const items = [
   // ]
   ),
 
-  getItem("Class", "sub2", <ApartmentOutlined />, [
-    getItem("Create class", "3", <PlusOutlined />),
-    getItem("Class list", "4", <UnorderedListOutlined />),
-  ]),
+  getItem("Module Course", "sub7", <ReadOutlined />, 
+  // [
+  //   getItem("Create course", "1", <PlusOutlined />),
+  //   getItem("Course list", "2", <UnorderedListOutlined />),
+  // ]
+  ),
+
+  getItem("Class", "sub2", <ApartmentOutlined />, 
+  // [
+  //   getItem("Create class", "3", <PlusOutlined />),
+  //   getItem("Class list", "4", <UnorderedListOutlined />),
+  // ]
+  ),
 
   getItem("Teacher", "sub3", <GiTeacher />, 
   // [
@@ -56,11 +67,18 @@ const items = [
   // ]
   ),
 
-  getItem("Setting", "sub4", <SettingOutlined />, [
+  getItem("Student", "sub4", <UsergroupAddOutlined />, 
+  // [
+  //   // getItem("Create teacher", "5", <PlusOutlined />),
+  //   // getItem("Teacher list", "6", <UnorderedListOutlined />),
+  // ]
+  ),
+
+  getItem("Setting", "sub5", <SettingOutlined />, [
     getItem("Profile", "7", <ProfileOutlined />),
   ]),
 
-  getItem("Authentication", "sub5", <LockOutlined />, [
+  getItem("Authentication", "sub6", <LockOutlined />, [
     getItem("Forgot password", "8"),
     getItem("Reset password", "9"),
   ]),
@@ -140,10 +158,16 @@ const Admin = () => {
         return <UserList/>;
       case "sub1":
         return <CourseList/>;
+      case "sub2":
+        return <ClassList/>;
       case "sub3":
         return <TeacherList/>;
+      case "sub4":
+        return <StudentList/>;
+      case "sub7":
+        return <ModuleCourseList/>;
       default:
-        return  <TeacherList />;
+        return  <ClassList />;
     }
   };
   const [collapsed, setCollapsed] = useState(false);

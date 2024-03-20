@@ -7,36 +7,36 @@ import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-export default function UpdateTeacher(data) {
+export default function UpdateModuleCourse(data) {
   //data update
   const {dataUpdate}=data.data;
-  const [newDataUpdate,setNewDataUpdate]=useState({});
-  console.log("newDataUpdate",newDataUpdate);
+  const [newDataUpdate,setNewDataUpdate]=useState({start_date:"2024-03-04"});
   useEffect(() => {
     setNewDataUpdate(dataUpdate);
   }, [dataUpdate]);
-  // Date
+  //day config
   dayjs.extend(customParseFormat);
   const dateFormat = 'YYYY-MM-DD';
-  const dayNow= new Date();
-  const year = dayNow.getFullYear();
-  const month = (dayNow.getMonth() + 1).toString().padStart(2, '0');
-  const day = dayNow.getDate().toString().padStart(2, '0');
-  const defaultDate = `${year}-${month}-${day}`;
   
-  //Birth day
-  function getDobDay(e){
-    const dobDate = new Date(`${e.$y}-${e.$M+1}-${e.$D}`)
-    dobDate.setDate(dobDate.getDate() + 1);
-    setNewDataUpdate(prevData => ({
-      ...prevData,
-      dob:dobDate
-    }));
-  }
 
   //day time
+  function getStartDay(e){
+    const startDate = new Date(`${e.$y}-${e.$M+1}-${e.$D}`)
+    startDate.setDate(startDate.getDate() + 1);
+    setNewDataUpdate(prevData => ({
+      ...prevData,
+      start_date:startDate
+    }));
+  }
+  function getEndDay(e){
+    const endDate = new Date(`${e.$y}-${e.$M+1}-${e.$D}`)
+    endDate.setDate(endDate.getDate() + 1);
+    setNewDataUpdate(prevData => ({
+      ...prevData,
+      end_date:endDate
+    }));
+  }
   function formatDate(date) {
-    console.log("date",date);
     if(date.length<11){
       return date
     }else{
@@ -49,14 +49,23 @@ export default function UpdateTeacher(data) {
     }
   }
 
-  const handleFormSubmit = async (teacher_id, e) => {
+
+  function convertDay(e){
+    const newDate = new Date(e)
+    newDate.setDate(newDate.getDate());
+    return newDate
+  }
+
+  const handleFormSubmit = async (module_course_id, e) => {
       e.preventDefault();
       const access_token = localStorage.getItem("access_token");
-      const result=await apis.teacherApi.update(access_token,{newDataUpdate, teacher_id});
-      console.log("result",result);
-      if(result?.status==200){
-          data.data.success("Update teacher success")
-          data.data.handleGetTeacherList()
+      const result=await apis.moduleCourseApi.update(access_token,{formData:{...newDataUpdate,
+        start_date:newDataUpdate.start_date?.length>11?newDataUpdate.start_date:convertDay(newDataUpdate.start_date),
+        end_date:newDataUpdate.end_date?.length>11?newDataUpdate.end_date:convertDay(newDataUpdate.end_date),
+      }, module_course_id});
+      if(result.status==200){
+          data.data.success("Update module course success")
+          data.data.handleGetModuleCourseList()
           data.data.setOpen(false)
       }else{
           data.data.error(result?.message)
@@ -77,7 +86,7 @@ export default function UpdateTeacher(data) {
   }
   return (
     <Modal
-      title="UPDATE TEACHER INFORMATION"
+      title="UPDATE MODULE COURSE INFORMATION"
       open={data.data.open}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -100,7 +109,7 @@ export default function UpdateTeacher(data) {
                 type="text"
                 name="name"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Name"
+                placeholder="Name of module course"
                 required=""
                 value={newDataUpdate.name}
                 onChange={(e)=>{setFormData(e)}}
@@ -111,72 +120,68 @@ export default function UpdateTeacher(data) {
                 htmlFor="duration"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                Dob (Birthday)
+                Duration
               </label>
-              {newDataUpdate.dob?<DatePicker
-                        className="w-full"
-                        // defaultValue={dayjs(formatDate(newDataUpdate.start_date), dateFormat)}
-                        value={dayjs(formatDate(newDataUpdate.dob), dateFormat)}
-                        minDate={dayjs('1990-08-01', dateFormat)}
-                        maxDate={dayjs('2100-10-31', dateFormat)}
-                        onChange={(e)=>{getDobDay(e)}}
+              <input
+                type="number"
+                name="duration"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Module course duration"
+                value={newDataUpdate.duration}
+                onChange={(e)=>{setFormData(e)}}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="start_date"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Start date
+              </label>
+              {newDataUpdate.start_date?<DatePicker
+                // defaultValue={dayjs('1981-01-01', dateFormat)}
+                value={dayjs(formatDate(newDataUpdate.start_date), dateFormat)}
+                minDate={dayjs('1990-08-01', dateFormat)}
+                maxDate={dayjs('2100-10-31', dateFormat)}
+                onChange={(e)=>{getStartDay(e)}}
               />:<></>}
             </div>
 
-            <div className="sm:col-span-2">
+            <div>
               <label
-                htmlFor="email"
+                htmlFor="end_date"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                Email
+                End date
               </label>
-              <input
-                type="email"
-                name="email"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Email"
-                required=""
-                value={newDataUpdate.email}
-                onChange={(e)=>{setFormData(e)}}
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="phone"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Phone
-              </label>
-              <input
-                type="text"
-                name="phone"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Phone"
-                required=""
-                value={newDataUpdate.phone}
-                onChange={(e)=>{setFormData(e)}}
-              />
+              {newDataUpdate.end_date?<DatePicker
+                // defaultValue={dayjs('1981-01-01', dateFormat)}
+                value={dayjs(formatDate(newDataUpdate.end_date), dateFormat)}
+                minDate={dayjs('1990-08-01', dateFormat)}
+                maxDate={dayjs('2100-10-31', dateFormat)}
+                onChange={(e)=>{getEndDay(e)}}
+              />:<></>}
             </div>
           </div>
 
-          <div className="sm:col-span-2">
-              <label
-                htmlFor="address"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Address
-              </label>
-              <input
-                type="text"
-                name="address"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Address"
-                required=""
-                value={newDataUpdate.address}
-                onChange={(e)=>{setFormData(e)}}
-              />
-            </div>
+          <div className="mt-6 sm:col-span-2">
+            <label
+              htmlFor="description"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Description
+            </label>
+            <textarea
+              type="text"
+              name="description"
+              rows={8}
+              className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Module course description"
+              value={newDataUpdate.description}
+              onChange={(e)=>{setFormData(e)}}
+            />
+          </div>
 
           <button
             type="submit"

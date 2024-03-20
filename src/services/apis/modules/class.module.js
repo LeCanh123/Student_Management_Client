@@ -78,23 +78,41 @@ export default {
       });
   },
 
-  search: async (keyword) => {
+  get_all: async (access_token,skip,take) => {
     return await axios
-      .get(import.meta.env.VITE_SERVER_HOST + "api/classes/search" + keyword)
-      .then((response) => {
-        if (response.status === 200) {
-          return {
-            status: true,
-            message: "The class was found successfully",
-            data: response.data,
-          };
+      .get(import.meta.env.VITE_SERVER_HOST + `/api/classes?skip=${skip}&take=${take}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}` 
         }
-      })
+      }
+      )
+      .then((response) => response)
       .catch((error) => {
         return {
           status: false,
-          message: "An error occurred during database processing or querying",
+          message: "Get classed failed",
+          data: null,
         };
+      });
+  },
+
+  search: async (access_token,keyword,skip,take) => {
+    console.log("keyword",keyword);
+    console.log("skip",skip);
+    console.log("take",take);
+    return await axios
+      .get(import.meta.env.VITE_SERVER_HOST + "/api/classes/search?keyword=" +
+      keyword+`&skip=${skip}&take=${take}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}` 
+        }
+      }
+      )
+      .then((response) =>response)
+      .catch((error) => {
+        return error.response.data
       });
   },
 };

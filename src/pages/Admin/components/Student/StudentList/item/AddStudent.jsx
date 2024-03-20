@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 
-export default function AddTeacher(data) {
+export default function AddStudent(data) {
     const handleOk = () => {
         data.data.setOpen(false)
     };
@@ -31,14 +31,25 @@ export default function AddTeacher(data) {
     const newDay = dayNow.getDate().toString().padStart(2, '0');
     const newDefaultDate = `${newYear}-${newMonth}-${newDay}`;
 
+    //Get list class
+    const [listClass,setListClass]= useState([])
+    useEffect(()=>{
+        async function getClass(){
+            let getClass =await apis.classApi.get_all()
+            if(getClass.status==200){
+                setListClass(getClass.data.data)  
+            }
+        }
+        getClass()
+    },[])
     
     //Data submit
-    const [newTeacherData,setNewTeacherData] = useState({dob:newDefaultDate});
+    const [newStudentData,setNewStudentData] = useState({dob:newDefaultDate});
     //Birth day
     function getDobDay(e){
         const dobDate = new Date(`${e.$y}-${e.$M+1}-${e.$D}`)
         dobDate.setDate(dobDate.getDate() + 1);
-        setNewTeacherData(prevData => ({
+        setNewStudentData(prevData => ({
           ...prevData,
           dob:dobDate
         }));
@@ -62,27 +73,36 @@ export default function AddTeacher(data) {
                 setIsUserPhoneValid("")
             }
         }
-        setNewTeacherData(prevState => ({
+        setNewStudentData(prevState => ({
             ...prevState,
             [name]: value
         }));
     }
+    //set class id
+    function setClassId(e) {
+        setNewStudentData(prevState => ({
+            ...prevState,
+            class_id: e
+        }));
+    }
+
+
     //submit
     async function handleFormSubmit(e){
         e.preventDefault() 
         const access_token = localStorage.getItem("access_token");
-        if(newTeacherData.name&&newTeacherData.dob&&
-            newTeacherData.email,newTeacherData.phone,
-            newTeacherData.address
+        if(newStudentData.name&&newStudentData.dob&&
+            newStudentData.email,newStudentData.phone,
+            newStudentData.address
         ){
-            let createNewTeacher=await apis.teacherApi.create(access_token,newTeacherData);
-            console.log("createNewTeacher",createNewTeacher);
-            if(createNewTeacher.status==201){
+            let createNewStudent=await apis.studentApi.create(access_token,newStudentData);
+            console.log("createNewStudent",createNewStudent);
+            if(createNewStudent.status==201){
                 data.data.setOpen(false);
-                data.data.success(createNewTeacher.data?.message)
+                data.data.success(createNewStudent.data?.message)
                 data.data.getData()
             }else{
-                data.data.error(createNewTeacher.message)
+                data.data.error(createNewStudent.message)
             }
         }else{
             data.data.error("Please fill in all fields")
@@ -106,7 +126,7 @@ export default function AddTeacher(data) {
   return (
     
     <Modal
-    title="ADD NEW TEACHER"
+    title="ADD NEW STUDENT"
     open={data.data.open}
     onOk={handleOk}
     onCancel={handleCancel}
@@ -121,14 +141,14 @@ export default function AddTeacher(data) {
                             htmlFor="name"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            Teacher Name
+                            Student Name
                         </label>
                         <input
                             type="text"
                             name="name"
                             id='name'
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Name of teacher"
+                            placeholder="Name of student"
                             required=""
                             onChange={(e)=>{ setFormData(e)}}
                         />
@@ -208,13 +228,40 @@ export default function AddTeacher(data) {
                         onChange={(e) => setFormData(e)}
                     />
                 </div>
+{/* Class */}                
+                <div className="sm:col-span-2">
+                    <label
+                        htmlFor="address"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                        Class
+                    </label>
+                    <select id="countries" 
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                     focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                     dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    
+                    onChange={(e)=>{setClassId(e.target.value);}}
+
+                    >
+                        <option selected value="none">Choose a class</option>
+                        <option value="none">None</option>
+                        {listClass.map((classData)=>{
+                            return (
+                                <option value={classData.id}>{classData.name}</option>
+                            )
+                            
+                        })}
+                    </select>
+                </div>
             </div>
 {/* Submit */}
             <button
                 type="submit"
                 className="mt-6 w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
             >
-                Add New Teacher
+                Add New Student
             </button>
         </form>
     </div>

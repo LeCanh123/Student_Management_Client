@@ -1,7 +1,7 @@
 import Search from "./item/Search";
 import Body from "./item/Body";
 import PaginationPage from "./item/Pagination";
-const ClassList = () => { 
+const StudentList = () => { 
   return (
     <div>
       {" "}
@@ -12,4 +12,4 @@ const ClassList = () => {
   );
 };
 
-export default ClassList;
+export default StudentList;

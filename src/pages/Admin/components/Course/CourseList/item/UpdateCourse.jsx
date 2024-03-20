@@ -56,34 +56,34 @@ export default function UpdateCourse(data) {
     return newDate
   }
 
-    const handleFormSubmit = async (course_id, e) => {
-        e.preventDefault();
-        const access_token = localStorage.getItem("access_token");
-        const result=await apis.courseApi.update(access_token,{formData:{...newDataUpdate,
-          start_date:newDataUpdate.start_date?.length>11?newDataUpdate.start_date:convertDay(newDataUpdate.start_date),
-          end_date:newDataUpdate.end_date?.length>11?newDataUpdate.end_date:convertDay(newDataUpdate.end_date),
-        }, course_id});
-        if(result.status==200){
-            data.data.success("Update course success")
-            data.data.handleGetCourseList()
-            data.data.setOpen(false)
-        }else{
-            data.data.error(result?.message)
-        }
-    };
-    const handleOk = () => {
-      data.data.setOpen(false)
-    };
-    const handleCancel = () => {
-      data.data.setOpen(false)
-    };
-    function setFormData(e) {
-        const { name, value } = e.target;
-        setNewDataUpdate(prevData => ({
-          ...prevData,
-          [name]: value 
-      }));
-    }
+  const handleFormSubmit = async (course_id, e) => {
+      e.preventDefault();
+      const access_token = localStorage.getItem("access_token");
+      const result=await apis.courseApi.update(access_token,{formData:{...newDataUpdate,
+        start_date:newDataUpdate.start_date?.length>11?newDataUpdate.start_date:convertDay(newDataUpdate.start_date),
+        end_date:newDataUpdate.end_date?.length>11?newDataUpdate.end_date:convertDay(newDataUpdate.end_date),
+      }, course_id});
+      if(result.status==200){
+          data.data.success("Update course success")
+          data.data.handleGetCourseList()
+          data.data.setOpen(false)
+      }else{
+          data.data.error(result?.message)
+      }
+  };
+  const handleOk = () => {
+    data.data.setOpen(false)
+  };
+  const handleCancel = () => {
+    data.data.setOpen(false)
+  };
+  function setFormData(e) {
+      const { name, value } = e.target;
+      setNewDataUpdate(prevData => ({
+        ...prevData,
+        [name]: value 
+    }));
+  }
   return (
     <Modal
       title="UPDATE COURSE INFORMATION"

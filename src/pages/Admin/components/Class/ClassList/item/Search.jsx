@@ -1,18 +1,18 @@
 import React from 'react'
 import apis from '../../../../../../services/apis/modules';
 import { useSelector, useDispatch } from 'react-redux'
-import { list ,pagination,setSeachStatus,setSeachValue} from '../../../../../../redux/slices/teacher-slice'; 
+import { list ,pagination,setSeachStatus,setSeachValue} from '../../../../../../redux/slices/class-slice'; 
 
 
 export default function Search() {
   const dispatch = useDispatch()
   const access_token = localStorage.getItem("access_token");
-  const {skip,take,total} = useSelector((state) => state.teacherSlice);
+  const {skip,take,total} = useSelector((state) => state.classSlice);
   async function handleSearch(e){
     const keywordValue = e.target.elements.keyword.value;
     dispatch(setSeachValue({value_search:keywordValue}));
-    const searchList = await apis.teacherApi.search(access_token,keywordValue,0,take);
-    console.log("searchList",searchList);
+    const searchList = await apis.classApi.search(access_token,keywordValue,0,take);
+    console.log("searchList9981",searchList);
     if (searchList.status==200) {
     if(keywordValue){
       dispatch(setSeachStatus({is_search:true}));

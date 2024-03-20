@@ -7,7 +7,7 @@ import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-export default function UpdateTeacher(data) {
+export default function UpdateClass(data) {
   //data update
   const {dataUpdate}=data.data;
   const [newDataUpdate,setNewDataUpdate]=useState({});
@@ -49,14 +49,15 @@ export default function UpdateTeacher(data) {
     }
   }
 
-  const handleFormSubmit = async (teacher_id, e) => {
+  //Submit
+  const handleFormSubmit = async (class_id, e) => {
       e.preventDefault();
       const access_token = localStorage.getItem("access_token");
-      const result=await apis.teacherApi.update(access_token,{newDataUpdate, teacher_id});
+      const result=await apis.classApi.update(access_token,{newDataUpdate, class_id});
       console.log("result",result);
       if(result?.status==200){
-          data.data.success("Update teacher success")
-          data.data.handleGetTeacherList()
+          data.data.success("Update class success")
+          data.data.handleGetClassList()
           data.data.setOpen(false)
       }else{
           data.data.error(result?.message)
@@ -68,6 +69,7 @@ export default function UpdateTeacher(data) {
   const handleCancel = () => {
     data.data.setOpen(false)
   };
+  //Set form data
   function setFormData(e) {
       const { name, value } = e.target;
       setNewDataUpdate(prevData => ({
@@ -75,9 +77,27 @@ export default function UpdateTeacher(data) {
         [name]: value 
     }));
   }
+  //set class id
+  function setClassId(e) {
+    setNewDataUpdate(prevState => ({
+        ...prevState,
+        class_id: e
+    }));
+  }
+  //Get list class
+  const [listClass,setListClass]= useState([])
+  useEffect(()=>{
+      async function getClass(){
+          let getClass =await apis.classApi.get_all()
+          if(getClass.status==200){
+              setListClass(getClass.data.data)  
+          }
+      }
+      getClass()
+  },[])
   return (
     <Modal
-      title="UPDATE TEACHER INFORMATION"
+      title="UPDATE CLASS INFORMATION"
       open={data.data.open}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -89,6 +109,7 @@ export default function UpdateTeacher(data) {
           }}
         >
           <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+{/* Name */}
             <div className="sm:col-span-2">
               <label
                 htmlFor="name"
@@ -106,6 +127,7 @@ export default function UpdateTeacher(data) {
                 onChange={(e)=>{setFormData(e)}}
               />
             </div>
+{/* Dob */}
             <div className="w-full">
               <label
                 htmlFor="duration"
@@ -115,14 +137,13 @@ export default function UpdateTeacher(data) {
               </label>
               {newDataUpdate.dob?<DatePicker
                         className="w-full"
-                        // defaultValue={dayjs(formatDate(newDataUpdate.start_date), dateFormat)}
                         value={dayjs(formatDate(newDataUpdate.dob), dateFormat)}
                         minDate={dayjs('1990-08-01', dateFormat)}
                         maxDate={dayjs('2100-10-31', dateFormat)}
                         onChange={(e)=>{getDobDay(e)}}
               />:<></>}
             </div>
-
+{/* Email */}
             <div className="sm:col-span-2">
               <label
                 htmlFor="email"
@@ -140,7 +161,7 @@ export default function UpdateTeacher(data) {
                 onChange={(e)=>{setFormData(e)}}
               />
             </div>
-
+{/* Phone */}
             <div className="sm:col-span-2">
               <label
                 htmlFor="phone"
@@ -158,9 +179,9 @@ export default function UpdateTeacher(data) {
                 onChange={(e)=>{setFormData(e)}}
               />
             </div>
-          </div>
-
-          <div className="sm:col-span-2">
+            </div>
+{/* Address */}
+            <div className="sm:col-span-2">
               <label
                 htmlFor="address"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -177,7 +198,34 @@ export default function UpdateTeacher(data) {
                 onChange={(e)=>{setFormData(e)}}
               />
             </div>
+{/* Class */}                
+            <div className="sm:col-span-2">
+                    <label
+                        htmlFor="address"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                        Class
+                    </label>
+                    <select id="countries" 
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                     focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                     dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    
+                    onChange={(e)=>{setClassId(e.target.value);}}
 
+                    >
+                        <option value="none">Choose A Class</option>
+                        <option value="none">None</option>
+                        {listClass.map((classData)=>{
+                            return (
+                                <option selected={newDataUpdate.class?.id == classData.id} value={classData.id}>{classData.name}</option>
+                            )
+                            
+                        })}
+                    </select>
+            </div>
+{/* Submit */}
           <button
             type="submit"
             className="mt-6 w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"

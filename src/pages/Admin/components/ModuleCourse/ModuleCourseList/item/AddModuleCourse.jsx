@@ -23,7 +23,6 @@ export default function AddModuleCourse(data) {
     useEffect(()=>{
         async function getCourse(){
             let getCourse =await apis.courseApi.get_all(access_token);
-            console.log("getCourse",getCourse);
             if(getCourse.status==200){
                 setListCourse(getCourse.data.data)  
             }
@@ -49,7 +48,6 @@ export default function AddModuleCourse(data) {
 
     //Data submit
     const [newModuleCourseData,setNewModuleCourseData] = useState({});
-    console.log("newModuleCourseData",newModuleCourseData);
     //submit
     async function handleFormSubmit(e){
         e.preventDefault() 

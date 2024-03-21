@@ -15,7 +15,6 @@ export const courseModule= {
   },
 
   update: async (access_token, data) => {
-    console.log("dataa");
     return await axios
       .put(
         import.meta.env.VITE_SERVER_HOST + "/api/course/" + data.course_id,
@@ -120,7 +119,6 @@ export const courseModule= {
       })
       .then((response) => response)
       .catch((error) => {
-        console.log("erroer",error);
         return {
           status: false,
           data: null,

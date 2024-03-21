@@ -19,7 +19,6 @@ export default function AddClass(data) {
     useEffect(()=>{
         async function getCourse(){
             let getCourse =await apis.courseApi.get_all(access_token);
-            console.log("getCourse",getCourse);
             if(getCourse.status==200){
                 setListCourse(getCourse.data.data)  
             }
@@ -70,7 +69,6 @@ export default function AddClass(data) {
         if(newClassData.name
         ){
             let createNewClass=await apis.classApi.create(access_token,newClassData);
-            console.log("createNewClass",createNewClass);
             if(createNewClass.status==201){
                 data.data.setOpen(false);
                 data.data.success(createNewClass.data?.message)

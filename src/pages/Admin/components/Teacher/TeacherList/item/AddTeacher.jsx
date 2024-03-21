@@ -76,7 +76,6 @@ export default function AddTeacher(data) {
             newTeacherData.address
         ){
             let createNewTeacher=await apis.teacherApi.create(access_token,newTeacherData);
-            console.log("createNewTeacher",createNewTeacher);
             if(createNewTeacher.status==201){
                 data.data.setOpen(false);
                 data.data.success(createNewTeacher.data?.message)

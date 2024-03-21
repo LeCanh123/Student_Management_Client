@@ -2,7 +2,6 @@ import axios from "axios";
 
 export const teacherModule= {
   create: async (access_token, form_data) => {
-    console.log("form_data",form_data);
     return await axios
       .post(import.meta.env.VITE_SERVER_HOST + "/api/teachers", form_data, {
         headers: {
@@ -69,7 +68,6 @@ export const teacherModule= {
       )
       .then((response) => response)
       .catch((error) => {
-        console.log("error",error);
        return  error?.response?.data
       });
   },

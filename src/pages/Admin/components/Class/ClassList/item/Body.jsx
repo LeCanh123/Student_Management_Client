@@ -16,7 +16,6 @@ export default function Body() {
 
   async function handleGetClassList() {
       const getList = await apis.classApi.get_all(access_token,skip,take);
-      console.log("getList",getList);
       if (getList.status==200) {
       dispatch(list(getList.data.data));
       dispatch(pagination({ total: Math.round(getList.data.total) }));
@@ -24,7 +23,6 @@ export default function Body() {
   }
   async function handleSearchClassList() {
       const searchList = await apis.classApi.search(access_token,value_search,skip,take);
-      console.log("searchList",searchList);
       if (searchList.status==200) {
           dispatch(list(searchList.data.data));
           dispatch(pagination({total:searchList.data.total}));

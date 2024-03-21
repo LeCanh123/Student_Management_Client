@@ -13,7 +13,6 @@ const Home = () => {
     }else{
       let checkAuth=async()=>{
         let check=  await Apis.courseApi.check_auth(checkAccessToken)
-        console.log("check",check);
         if(check.status==200){
           navigate("/admin")
         }

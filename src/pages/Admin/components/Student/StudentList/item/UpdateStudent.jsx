@@ -11,7 +11,6 @@ export default function UpdateStudent(data) {
   //data update
   const {dataUpdate}=data.data;
   const [newDataUpdate,setNewDataUpdate]=useState({});
-  console.log("newDataUpdate",newDataUpdate);
   useEffect(() => {
     setNewDataUpdate({...dataUpdate,
     class_id:dataUpdate.class?.id||null
@@ -38,7 +37,6 @@ export default function UpdateStudent(data) {
 
   //day time
   function formatDate(date) {
-    console.log("date",date);
     if(date.length<11){
       return date
     }else{
@@ -56,7 +54,6 @@ export default function UpdateStudent(data) {
       e.preventDefault();
       const access_token = localStorage.getItem("access_token");
       const result=await apis.studentApi.update(access_token,{newDataUpdate, student_id});
-      console.log("result",result);
       if(result?.status==200){
           data.data.success("Update student success")
           data.data.handleGetStudentList()

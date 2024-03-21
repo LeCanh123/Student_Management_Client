@@ -72,8 +72,6 @@ const Register = () => {
   //password
   const [isConfirmPasswordValid,setIsConfirmPasswordValid]=useState('')
   function isValidConfirmPassword(password) {
-    console.log("newUserData",newUserData);
-    console.log("password",password);
     if(password != newUserData.password){
       setIsConfirmPasswordValid("Passwords do not match")
     }else{
@@ -88,7 +86,6 @@ const Register = () => {
   }
   //set form
   const [newUserData,setNewUserData] = useState({role:"ADMIN"});
-  console.log("newUserData",newUserData);
   function setFormData(e) {
       const { name, value } = e.target;
       if(name=="username"){
@@ -140,7 +137,6 @@ const Register = () => {
           newUserData.phone
       ){
           let createNewUser=await apis.adminApi.register(formData);
-          console.log("createNewUser",createNewUser);
           if(createNewUser.status==200){
               success(createNewUser.data?.message)
               window.location.href="/"

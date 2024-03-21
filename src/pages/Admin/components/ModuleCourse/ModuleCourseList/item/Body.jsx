@@ -46,7 +46,6 @@ export default function Body() {
   const [dataUpdate,setDataUpdate]=useState({})
   const [openModelUpdate,setOpenModelUpdate]=useState(false)
   const handleOpenModalUpdate = (data) => {
-    console.log("handleOpenModalUpdate",data);
       setOpenModelUpdate(true)
       setDataUpdate(data)
   };

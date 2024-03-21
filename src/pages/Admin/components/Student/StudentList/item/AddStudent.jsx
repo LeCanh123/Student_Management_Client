@@ -96,7 +96,6 @@ export default function AddStudent(data) {
             newStudentData.address
         ){
             let createNewStudent=await apis.studentApi.create(access_token,newStudentData);
-            console.log("createNewStudent",createNewStudent);
             if(createNewStudent.status==201){
                 data.data.setOpen(false);
                 data.data.success(createNewStudent.data?.message)

@@ -3,7 +3,6 @@ import {Modal } from 'antd';
 
 export default function ModuleCourseInfo(data) {
     const {dataDetail}=data.data
-    console.log("dataDetail9981",dataDetail);
     const handleOk = () => {
         data.data.setOpen(false);
     };
@@ -37,6 +36,8 @@ export default function ModuleCourseInfo(data) {
         required=""
         >{dataDetail.id}</span>
     </div>
+
+
 {/*Module Course Name */}
     <div className="sm:col-span-2">
         <label

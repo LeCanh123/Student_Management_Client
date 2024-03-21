@@ -13,8 +13,6 @@ export default function Body() {
   const dispatch = useDispatch()
   const access_token = localStorage.getItem("access_token");
   const {skip,take,total,is_search,studentList,value_search} = useSelector((state) => state.studentSlice);
-  console.log("getList",studentList);
-
   async function handleGetStudentList() {
       const getList = await apis.studentApi.get_all(access_token,skip,take);
       if (getList.status==200) {

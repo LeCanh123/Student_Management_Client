@@ -12,7 +12,6 @@ export default function UpdateModuleCourse(data) {
   //data update
   const {dataUpdate}=data.data;
   const [newDataUpdate,setNewDataUpdate]=useState();
-  console.log("newDataUpdate",newDataUpdate);
   useEffect(() => {
     setNewDataUpdate({...dataUpdate,
       course_id:(dataUpdate.course?.id)?dataUpdate.course:null
@@ -49,11 +48,9 @@ export default function UpdateModuleCourse(data) {
 
   //Get list course
   const [listCourse,setListCourse]= useState([])
-  console.log("listCourse9999999999",listCourse);
   useEffect(()=>{
       async function getCourse(){
           let getCourse =await apis.courseApi.get_all(access_token);
-          console.log("getCourse999999999999",getCourse);
           if(getCourse.status==200){
               setListCourse(getCourse.data.data)  
           }

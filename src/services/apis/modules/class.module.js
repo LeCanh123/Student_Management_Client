@@ -75,9 +75,6 @@ export default {
   },
 
   search: async (access_token,keyword,skip,take) => {
-    console.log("keyword",keyword);
-    console.log("skip",skip);
-    console.log("take",take);
     return await axios
       .get(import.meta.env.VITE_SERVER_HOST + "/api/classes/search?keyword=" +
       keyword+`&skip=${skip}&take=${take}`,

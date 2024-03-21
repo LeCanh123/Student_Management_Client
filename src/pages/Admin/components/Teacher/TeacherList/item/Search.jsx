@@ -12,7 +12,6 @@ export default function Search() {
     const keywordValue = e.target.elements.keyword.value;
     dispatch(setSeachValue({value_search:keywordValue}));
     const searchList = await apis.teacherApi.search(access_token,keywordValue,0,take);
-    console.log("searchList",searchList);
     if (searchList.status==200) {
     if(keywordValue){
       dispatch(setSeachStatus({is_search:true}));

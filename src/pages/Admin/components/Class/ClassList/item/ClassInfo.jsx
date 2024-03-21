@@ -47,38 +47,42 @@ export default function ClassInfo(data) {
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
         >{dataDetail.name}</span>
     </div>
-{/* Dob (Birthday) */}
+{/* Course Id */}
     <div className="sm:col-span-2">
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        Dob (Birthday)
+        Course
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.dob?.slice(0,10)}</span>
+        >{
+            (dataDetail.course)?(dataDetail.course?.name):'null'
+        }</span>
     </div>
-{/* Email */}
+{/* Teacher id */}
     <div className="w-full">
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        Email
+        Teacher
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.email}</span>
+        >{
+            (dataDetail.teacher)?(dataDetail.teacher?.name + " - phone: "+ dataDetail.teacher?.phone):'null'
+        }</span>
     </div>
-{/* Phone */}
+{/* Max student */}
     <div>
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        Phone
+        Max Student
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.phone}</span>
+        >{dataDetail.max_students}</span>
     </div>
 {/* Status */}
     <div>
@@ -90,17 +94,6 @@ export default function ClassInfo(data) {
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
         >{dataDetail.status?"true":"false"}</span>
-    </div>
-{/* Address */}
-    <div>
-        <label
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-        Address
-        </label>
-        <span
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.address}</span>
     </div>
     </div>
     </form>

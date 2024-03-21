@@ -4,7 +4,6 @@ import PaginationPage from "./item/Pagination";
 const ClassList = () => { 
   return (
     <div>
-      {" "}
       <Search></Search>
       <Body></Body>
       <PaginationPage></PaginationPage>

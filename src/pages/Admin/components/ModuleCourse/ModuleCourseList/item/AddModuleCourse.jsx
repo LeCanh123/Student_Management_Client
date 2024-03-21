@@ -10,6 +10,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 
 export default function AddModuleCourse(data) {
+    const access_token = localStorage.getItem("access_token");
     const handleOk = () => {
         data.data.setOpen(false)
     };
@@ -17,30 +18,24 @@ export default function AddModuleCourse(data) {
         data.data.setOpen(false)
     };
 
-    // Date
-    dayjs.extend(customParseFormat);
-    const dateFormat = 'YYYY-MM-DD';
-    const dayNow= new Date();
-    const year = dayNow.getFullYear();
-    const month = (dayNow.getMonth() + 1).toString().padStart(2, '0');
-    const day = dayNow.getDate().toString().padStart(2, '0');
-    const defaultDate = `${year}-${month}-${day}`;
-
-
-    //Data submit
-    const [newModuleCourseData,setNewModuleCourseData] = useState({start_date:defaultDate,end_date:defaultDate});
-    //Start date + end date
-    function getStartDay(e){
-        setNewModuleCourseData(prevData => ({
-          ...prevData,
-          start_date:`${e.$y}-${e.$M+1}-${e.$D}`
+    //Get list course
+    const [listCourse,setListCourse]= useState([])
+    useEffect(()=>{
+        async function getCourse(){
+            let getCourse =await apis.courseApi.get_all(access_token);
+            console.log("getCourse",getCourse);
+            if(getCourse.status==200){
+                setListCourse(getCourse.data.data)  
+            }
+        }
+        getCourse()
+    },[])
+    //set course id
+    function setCourseId(e) {
+        setNewModuleCourseData(prevState => ({
+            ...prevState,
+            course_id: e
         }));
-    }
-    function getEndDay(e){
-    setNewModuleCourseData(prevData => ({
-        ...prevData,
-        end_date:`${e.$y}-${e.$M+1}-${e.$D}`
-    }));
     }
 
     //set form
@@ -51,13 +46,14 @@ export default function AddModuleCourse(data) {
             [name]: value
         }));
     }
+
+    //Data submit
+    const [newModuleCourseData,setNewModuleCourseData] = useState({});
+    console.log("newModuleCourseData",newModuleCourseData);
     //submit
     async function handleFormSubmit(e){
         e.preventDefault() 
-        const access_token = localStorage.getItem("access_token");
-
-        if(newModuleCourseData.name&&newModuleCourseData.start_date&&
-            newModuleCourseData.end_date
+        if(newModuleCourseData.name&&newModuleCourseData.duration
         ){
             let createNewModuleCourse=await apis.moduleCourseApi.create(access_token,newModuleCourseData);
             if(createNewModuleCourse.status==201){
@@ -71,7 +67,6 @@ export default function AddModuleCourse(data) {
         }
   
     }
-    //Message
   return (
     
     <Modal
@@ -121,7 +116,7 @@ export default function AddModuleCourse(data) {
                         {/* {isUserNamevalid?<div style={{color:"red"}}>* {isUserNamevalid}</div>:null} */}
                     </div>
                 </div>
-{/* start date+ end date */}
+{/* Course id */}
                 <div className="grid gap-4 sm:grid-cols-2">
                     <div className="w-full">
                         <label
@@ -130,47 +125,25 @@ export default function AddModuleCourse(data) {
                         >
                             Start date
                         </label>
-                        {<DatePicker
-                        className="w-full"
-                        defaultValue={dayjs(defaultDate, dateFormat)}
-                        minDate={dayjs('1990-08-01', dateFormat)}
-                        maxDate={dayjs('2100-10-31', dateFormat)}
-                        onChange={(e)=>{getStartDay(e)}}
-                        />}
-                    </div>
-                    <div className="sm:col-span-2 relative">
-                        <label
-                            htmlFor="enddate"
-                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        <select id="course_id" 
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                        focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                        dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        
+                        onChange={(e)=>{setCourseId(e.target.value);}}
+
                         >
-                            End date
-                        </label>
-                        {<DatePicker
-                        className="w-full"
-                        defaultValue={dayjs(defaultDate, dateFormat)}
-                        minDate={dayjs('1990-08-01', dateFormat)}
-                        maxDate={dayjs('2100-10-31', dateFormat)}
-                        onChange={(e)=>{getEndDay(e)}}
-                    />}
+                            <option selected value="none">Choose a course</option>
+                            <option value="none">None</option>
+                            {listCourse.map((course)=>{
+                                return (
+                                    <option value={course.id}>{course.name}</option>
+                                )
+                                
+                            })}
+                        </select>
                     </div>
-                </div>
-{/* Description */}                
-                <div className="sm:col-span-2">
-                    <label
-                        htmlFor="description"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                        Description
-                    </label>
-                    <textarea 
-                        type="text"
-                        name="description"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block 
-                        w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Module Course description"
-                        required=""
-                        onChange={(e) => setFormData(e)}
-                    />
                 </div>
             </div>
             <button

@@ -16,6 +16,7 @@ export default function Body() {
 
   async function handleGetClassList() {
       const getList = await apis.classApi.get_all(access_token,skip,take);
+      console.log("getList",getList);
       if (getList.status==200) {
       dispatch(list(getList.data.data));
       dispatch(pagination({ total: Math.round(getList.data.total) }));
@@ -96,19 +97,16 @@ export default function Body() {
             Name
           </th>
           <th scope="col" className="px-6 py-3">
-            Date of birth
+            Course
           </th>
           <th scope="col" className="px-6 py-3">
-            Email
+           Max Student
           </th>
           <th scope="col" className="px-6 py-3">
-            Phone number
+            Status
           </th>
           <th scope="col" className="px-6 py-3">
-            Class
-          </th>
-          <th scope="col" className="px-6 py-3 text-center">
-            Action
+            Teacher
           </th>
         </tr>
       </thead>
@@ -122,10 +120,10 @@ export default function Body() {
             >
             {class1.name}
             </th>
-            <td className="px-6 py-4">{class1.dob?.slice(0,10)}</td>
-            <td className="px-6 py-4">{class1.email}</td>
-            <td className="px-6 py-4">{class1.phone}</td>
-            <td className="px-6 py-4">{(class1.class?.name)?(class1.class?.name):"null"}</td>
+            <td className="px-6 py-4">{(class1.course)?(class1.course?.name):'null'}</td>
+            <td className="px-6 py-4">{class1.max_students}</td>
+            <td className="px-6 py-4">{class1.status?"True":"False"}</td>
+            <td className="px-6 py-4">{(class1.teacher)?(class1.teacher?.name):'null'}</td>
             <td className="px-6 py-4">
             <div className="flex justify-between">
                 <Button type="dashed" dark

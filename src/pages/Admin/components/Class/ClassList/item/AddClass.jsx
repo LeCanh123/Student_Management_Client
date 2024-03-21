@@ -1,15 +1,12 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
 import { useState, useEffect } from "react";
-import { Button, message, Space, Modal } from 'antd';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import {Modal } from 'antd';
 import apis from '../../../../../../services/apis/modules';
-import { DatePicker } from 'antd';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 
 
 export default function AddClass(data) {
+    const access_token = localStorage.getItem("access_token");
     const handleOk = () => {
         data.data.setOpen(false)
     };
@@ -17,83 +14,60 @@ export default function AddClass(data) {
         data.data.setOpen(false)
     };
 
-    // Date
-    dayjs.extend(customParseFormat);
-    const dateFormat = 'YYYY-MM-DD';
-    const dayNow= new Date();
-    const year = dayNow.getFullYear();
-    const month = (dayNow.getMonth() + 1).toString().padStart(2, '0');
-    const day = dayNow.getDate().toString().padStart(2, '0');
-    const defaultDate = `${year}-${month}-${day}`;
-    dayNow.setDate(dayNow.getDate() + 1);
-    const newYear = dayNow.getFullYear();
-    const newMonth = (dayNow.getMonth() + 1).toString().padStart(2, '0');
-    const newDay = dayNow.getDate().toString().padStart(2, '0');
-    const newDefaultDate = `${newYear}-${newMonth}-${newDay}`;
-
-    //Get list class
-    const [listClass,setListClass]= useState([])
+    //Get list course
+    const [listCourse,setListCourse]= useState([])
     useEffect(()=>{
-        async function getClass(){
-            let getClass =await apis.classApi.get_all()
-            if(getClass.status==200){
-                setListClass(getClass.data.data)  
+        async function getCourse(){
+            let getCourse =await apis.courseApi.get_all(access_token);
+            console.log("getCourse",getCourse);
+            if(getCourse.status==200){
+                setListCourse(getCourse.data.data)  
             }
         }
-        getClass()
+        getCourse()
+    },[])
+    //Get list teacher
+    const [listTeacher,setListTeacher]= useState([])
+    useEffect(()=>{
+        async function getTeacher(){
+            let getTeacher =await apis.teacherApi.get_all(access_token)
+            if(getTeacher.status==200){
+                setListTeacher(getTeacher.data.data)  
+            }
+        }
+        getTeacher()
     },[])
     
     //Data submit
-    const [newClassData,setNewClassData] = useState({dob:newDefaultDate});
-    //Birth day
-    function getDobDay(e){
-        const dobDate = new Date(`${e.$y}-${e.$M+1}-${e.$D}`)
-        dobDate.setDate(dobDate.getDate() + 1);
-        setNewClassData(prevData => ({
-          ...prevData,
-          dob:dobDate
-        }));
-    }
-
-
+    const [newClassData,setNewClassData] = useState({});
     //set form
     function setFormData(e) {
         const { name, value } = e.target;
-        if(name=="email"){
-            if(!isValidEmail(value)){
-                setIsUserEmailvalid("Invalid email")
-            }else{
-                setIsUserEmailvalid("")
-            }
-        }
-        if(name=="phone"){
-            if(!isValidPhone(value)){
-                setIsUserPhoneValid("Invalid phone number")
-            }else{
-                setIsUserPhoneValid("")
-            }
-        }
         setNewClassData(prevState => ({
             ...prevState,
             [name]: value
         }));
     }
-    //set class id
-    function setClassId(e) {
+    //set course id
+    function setCourseId(e) {
         setNewClassData(prevState => ({
             ...prevState,
-            class_id: e
+            course_id: e
+        }));
+    }
+    //set teacher id
+    function setTeacherId(e) {
+        setNewClassData(prevState => ({
+            ...prevState,
+            teacher_id: e
         }));
     }
 
 
     //submit
     async function handleFormSubmit(e){
-        e.preventDefault() 
-        const access_token = localStorage.getItem("access_token");
-        if(newClassData.name&&newClassData.dob&&
-            newClassData.email,newClassData.phone,
-            newClassData.address
+        e.preventDefault()  
+        if(newClassData.name
         ){
             let createNewClass=await apis.classApi.create(access_token,newClassData);
             console.log("createNewClass",createNewClass);
@@ -110,19 +84,6 @@ export default function AddClass(data) {
   
     }
     
-    
-    //email
-    const [isUserEmailvalid,setIsUserEmailvalid]=useState('')
-    function isValidEmail(email) {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return regex.test(email);
-    }
-    //phone
-    const [isUserPhoneValid,setIsUserPhoneValid]=useState('')
-    function isValidPhone(phone) {
-        const regex = /^\d{6,15}$/;
-        return regex.test(phone);
-    }
   return (
     
     <Modal
@@ -134,7 +95,7 @@ export default function AddClass(data) {
     <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
         <form onSubmit={(e) => {handleFormSubmit(e);}}>
             <div className="grid gap-4 sm:grid-cols-1 sm:gap-6">
-{/* Name + Birthday*/}
+{/* Name +Max student*/}
                 <div className="grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                         <label
@@ -156,104 +117,75 @@ export default function AddClass(data) {
                     </div>
                     <div className="sm:col-span-2">
                         <label
-                            htmlFor="dob"
+                            htmlFor="max_students"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            Dob (Birth Day)
+                            Max Student
                         </label>
-                        <DatePicker
-                        className="w-full"
-                        defaultValue={dayjs(defaultDate, dateFormat)}
-                        minDate={dayjs('1990-08-01', dateFormat)}
-                        maxDate={dayjs('2100-10-31', dateFormat)}
-                        onChange={(e)=>{getDobDay(e)}}
+                        <input
+                            type="number"
+                            name="max_students"
+                            id='email'
+                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            placeholder="Max student"
+                            required=""
+                            onChange={(e)=>{ setFormData(e)}}
                         />
-                        {/* {isUserNamevalid?<div style={{color:"red"}}>* {isUserNamevalid}</div>:null} */}
                     </div>
                 </div>
-{/* Email + Phone */}
+{/* Course_id + Class_id */}
                 <div className="grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
                         <label
                             htmlFor="email"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            Email
+                            Course
                         </label>
-                        <input
-                            type="email"
-                            name="email"
-                            id='email'
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Email"
-                            required=""
-                            onChange={(e)=>{ setFormData(e)}}
-                        />
-                        {isUserEmailvalid?<div style={{color:"red"}}>* {isUserEmailvalid}</div>:null}
+                        <select id="course_id" 
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                        focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                        dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        
+                        onChange={(e)=>{setCourseId(e.target.value);}}
+
+                        >
+                            <option selected value="none">Choose a course</option>
+                            <option value="none">None</option>
+                            {listCourse.map((course)=>{
+                                return (
+                                    <option value={course.id}>{course.name}</option>
+                                )
+                                
+                            })}
+                        </select>
                     </div>
                     <div className="sm:col-span-2 relative">
                         <label
-                            htmlFor="phone"
+                            htmlFor="teacher_id"
                             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                            Phone
+                            Teacher
                         </label>
-                        <input
-                            type="number"
-                            name="phone"
-                            id='email'
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Phone"
-                            required=""
-                            onChange={(e)=>{ setFormData(e)}}
-                        />
-                        {isUserPhoneValid?<div style={{color:"red"}}>* {isUserPhoneValid}</div>:null}
-                    </div>
-                </div>
-{/* Address */}                
-                <div className="sm:col-span-2">
-                    <label
-                        htmlFor="address"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                        Address
-                    </label>
-                    <input 
-                        type="text"
-                        name="address"
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block 
-                        w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Address"
-                        required=""
-                        onChange={(e) => setFormData(e)}
-                    />
-                </div>
-{/* Class */}                
-                <div className="sm:col-span-2">
-                    <label
-                        htmlFor="address"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                        Class
-                    </label>
-                    <select id="countries" 
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-                     focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
-                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-                     dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    
-                    onChange={(e)=>{setClassId(e.target.value);}}
+                        <select id="countries" 
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+                        focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                        dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        
+                        onChange={(e)=>{setTeacherId(e.target.value);}}
 
-                    >
-                        <option selected value="none">Choose a class</option>
-                        <option value="none">None</option>
-                        {listClass.map((classData)=>{
-                            return (
-                                <option value={classData.id}>{classData.name}</option>
-                            )
-                            
-                        })}
-                    </select>
+                        >
+                            <option selected value="none">Choose a teacher</option>
+                            <option value="none">None</option>
+                            {listTeacher.map((teacher)=>{
+                                return (
+                                    <option value={teacher.id}>{teacher.name}</option>
+                                )
+                            })}
+                        </select>
+                    </div>
                 </div>
             </div>
 {/* Submit */}

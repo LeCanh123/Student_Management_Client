@@ -1,53 +1,44 @@
 import React from 'react'
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from 'react-redux'
-import { Button, message, Space, Modal } from 'antd';
+import { Modal } from 'antd';
 import apis from '../../../../../../services/apis/modules';
-import { DatePicker } from 'antd';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 
 export default function UpdateClass(data) {
+  const access_token = localStorage.getItem("access_token");
   //data update
   const {dataUpdate}=data.data;
   const [newDataUpdate,setNewDataUpdate]=useState({});
   console.log("newDataUpdate",newDataUpdate);
   useEffect(() => {
-    setNewDataUpdate(dataUpdate);
+    setNewDataUpdate({...dataUpdate,
+      course_id:dataUpdate.course?.id||null,
+      teacher_id:dataUpdate.teacher?.id||null,
+  });
   }, [dataUpdate]);
-  // Date
-  dayjs.extend(customParseFormat);
-  const dateFormat = 'YYYY-MM-DD';
-  const dayNow= new Date();
-  const year = dayNow.getFullYear();
-  const month = (dayNow.getMonth() + 1).toString().padStart(2, '0');
-  const day = dayNow.getDate().toString().padStart(2, '0');
-  const defaultDate = `${year}-${month}-${day}`;
-  
-  //Birth day
-  function getDobDay(e){
-    const dobDate = new Date(`${e.$y}-${e.$M+1}-${e.$D}`)
-    dobDate.setDate(dobDate.getDate() + 1);
-    setNewDataUpdate(prevData => ({
-      ...prevData,
-      dob:dobDate
-    }));
-  }
 
-  //day time
-  function formatDate(date) {
-    console.log("date",date);
-    if(date.length<11){
-      return date
-    }else{
-      const previousDate = new Date(date);
-      previousDate.setDate(previousDate.getDate() - 1);
-      const year = previousDate.getFullYear();
-      const month = String(previousDate.getMonth() + 1).padStart(2, '0');
-      const day = String(previousDate.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-  }
+  //Get list course
+  const [listCourse,setListCourse]= useState([])
+  useEffect(()=>{
+      async function getCourse(){
+          let getCourse =await apis.courseApi.get_all(access_token);
+          if(getCourse.status==200){
+              setListCourse(getCourse.data.data)  
+          }
+      }
+      getCourse()
+  },[])
+  //Get list teacher
+  const [listTeacher,setListTeacher]= useState([])
+  useEffect(()=>{
+      async function getTeacher(){
+          let getTeacher =await apis.teacherApi.get_all(access_token)
+          if(getTeacher.status==200){
+              setListTeacher(getTeacher.data.data)  
+          }
+      }
+      getTeacher()
+  },[])
 
   //Submit
   const handleFormSubmit = async (class_id, e) => {
@@ -77,24 +68,21 @@ export default function UpdateClass(data) {
         [name]: value 
     }));
   }
-  //set class id
-  function setClassId(e) {
+  //set course id
+  function setCourseId(e) {
     setNewDataUpdate(prevState => ({
         ...prevState,
-        class_id: e
+        course_id: e
     }));
   }
-  //Get list class
-  const [listClass,setListClass]= useState([])
-  useEffect(()=>{
-      async function getClass(){
-          let getClass =await apis.classApi.get_all()
-          if(getClass.status==200){
-              setListClass(getClass.data.data)  
-          }
-      }
-      getClass()
-  },[])
+  //set teacher id
+  function setTeacherId(e) {
+    setNewDataUpdate(prevState => ({
+          ...prevState,
+          teacher_id: e
+      }));
+  }
+
   return (
     <Modal
       title="UPDATE CLASS INFORMATION"
@@ -127,103 +115,77 @@ export default function UpdateClass(data) {
                 onChange={(e)=>{setFormData(e)}}
               />
             </div>
-{/* Dob */}
+{/* Max student */}
             <div className="w-full">
               <label
-                htmlFor="duration"
+                htmlFor="max_students"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                Dob (Birthday)
-              </label>
-              {newDataUpdate.dob?<DatePicker
-                        className="w-full"
-                        value={dayjs(formatDate(newDataUpdate.dob), dateFormat)}
-                        minDate={dayjs('1990-08-01', dateFormat)}
-                        maxDate={dayjs('2100-10-31', dateFormat)}
-                        onChange={(e)=>{getDobDay(e)}}
-              />:<></>}
-            </div>
-{/* Email */}
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Email
+                Max student
               </label>
               <input
-                type="email"
-                name="email"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Email"
-                required=""
-                value={newDataUpdate.email}
-                onChange={(e)=>{setFormData(e)}}
+                  type="number"
+                  name="max_students"
+                  id='email'
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  placeholder="Max student"
+                  required=""
+                  value={newDataUpdate.max_students}
+                  onChange={(e)=>{ setFormData(e)}}
               />
             </div>
-{/* Phone */}
+{/* Course id */}
             <div className="sm:col-span-2">
               <label
-                htmlFor="phone"
+                htmlFor="course_id"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                Phone
+                Course
               </label>
-              <input
-                type="text"
-                name="phone"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Phone"
-                required=""
-                value={newDataUpdate.phone}
-                onChange={(e)=>{setFormData(e)}}
-              />
-            </div>
-            </div>
-{/* Address */}
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="address"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Address
-              </label>
-              <input
-                type="text"
-                name="address"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Address"
-                required=""
-                value={newDataUpdate.address}
-                onChange={(e)=>{setFormData(e)}}
-              />
-            </div>
-{/* Class */}                
-            <div className="sm:col-span-2">
-                    <label
-                        htmlFor="address"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                        Class
-                    </label>
-                    <select id="countries" 
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
-                     focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
-                     dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-                     dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    
-                    onChange={(e)=>{setClassId(e.target.value);}}
+              <select id="course_id" 
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+              focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              
+              onChange={(e)=>{setCourseId(e.target.value);}}
 
-                    >
-                        <option value="none">Choose A Class</option>
-                        <option value="none">None</option>
-                        {listClass.map((classData)=>{
-                            return (
-                                <option selected={newDataUpdate.class?.id == classData.id} value={classData.id}>{classData.name}</option>
-                            )
-                            
-                        })}
-                    </select>
+              >
+                  <option selected value="none">Choose a course</option>
+                  <option value="none">None</option>
+                  {listCourse.map((course)=>{
+                      return (
+                          <option selected={course.id==newDataUpdate.course?.id} value={course.id}>{course.name}</option>
+                      )
+                  })}
+              </select>
+            </div>
+{/* Teacher id */}
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="teacher_id"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Teacher
+              </label>
+              <select id="teacher_id" 
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+              focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+              dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              
+              onChange={(e)=>{setTeacherId(e.target.value);}}
+
+              >
+                  <option selected value="none">Choose a teacher</option>
+                  <option value="none">None</option>
+                  {listTeacher.map((teacher)=>{
+                      return (
+                          <option selected={teacher.id==newDataUpdate.teacher?.id}  value={teacher.id}>{teacher.name}</option>
+                      )
+                  })}
+              </select>
+            </div>
             </div>
 {/* Submit */}
           <button

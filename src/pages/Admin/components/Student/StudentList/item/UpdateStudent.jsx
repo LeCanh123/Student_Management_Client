@@ -13,7 +13,9 @@ export default function UpdateStudent(data) {
   const [newDataUpdate,setNewDataUpdate]=useState({});
   console.log("newDataUpdate",newDataUpdate);
   useEffect(() => {
-    setNewDataUpdate(dataUpdate);
+    setNewDataUpdate({...dataUpdate,
+    class_id:dataUpdate.class?.id||null
+    });
   }, [dataUpdate]);
   // Date
   dayjs.extend(customParseFormat);

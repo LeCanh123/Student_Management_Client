@@ -9,48 +9,25 @@ export default {
           Authorization: `Bearer ${access_token}`,
         },
       })
-      .then((response) => {
-        if (response.status === 200) {
-          return {
-            status: true,
-            message: "The class has been created successfully.",
-            data: response.data,
-          };
-        }
-      })
+      .then((response) =>response)
       .catch((error) => {
-        return {
-          status: false,
-          message: "Invalid data. Please check and try again.",
-        };
+        return error.response.data
       });
   },
 
-  update: async (access_token, class_id, form_data) => {
-    return (await axios.put(
-      import.meta.env.VITE_SERVER_HOST + "api/classes" + class_id
-    ),
-    form_data,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${access_token}`,
-      },
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          return {
-            status: true,
-            message: "Class information has been updated successfully",
-            data: response.data,
-          };
-        }
-      })
+  update: async (access_token,data) => {
+    return await axios.put(
+      import.meta.env.VITE_SERVER_HOST + "/api/classes/" + data.class_id,
+      {...data.newDataUpdate},
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    )
+      .then((response) => response)
       .catch((error) => {
-        return {
-          status: false,
-          message: "Invalid data. Please check and try again.",
-        };
+        return error.response.data
       });
   },
 

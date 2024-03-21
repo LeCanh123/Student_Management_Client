@@ -3,6 +3,7 @@ import {Modal } from 'antd';
 
 export default function ModuleCourseInfo(data) {
     const {dataDetail}=data.data
+    console.log("dataDetail9981",dataDetail);
     const handleOk = () => {
         data.data.setOpen(false);
     };
@@ -63,35 +64,14 @@ export default function ModuleCourseInfo(data) {
         <label
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
         >
-        Start Date
+        Course
         </label>
         <span
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.start_date?.slice(0,10)}</span>
-    </div>
-{/* End Date */}
-    <div>
-        <label
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-        End Date
-        </label>
-        <span
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.end_date?.slice(0,10)}</span>
-    </div>
-{/* Description */}
-    <div>
-        <label
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-        >
-        Description
-        </label>
-        <span
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >{dataDetail.description}</span>
+        >{(dataDetail.course?.name)?dataDetail.course?.name:'null'}</span>
     </div>
     </div>
+{/* Submit */}
     </form>
     </div>
     </Modal>

@@ -46,11 +46,9 @@ export default function Body() {
   const [dataUpdate,setDataUpdate]=useState({})
   const [openModelUpdate,setOpenModelUpdate]=useState(false)
   const handleOpenModalUpdate = (data) => {
+    console.log("handleOpenModalUpdate",data);
       setOpenModelUpdate(true)
-
-      let start_date = data.start_date.slice(0, 10);
-      let end_date = data.end_date.slice(0, 10);
-      setDataUpdate({...data,start_date,end_date})
+      setDataUpdate(data)
   };
   //Model add module course
   const [openFormAddNewModuleCourse,setOpenFormAddNewModuleCourse]=useState(false);
@@ -99,13 +97,10 @@ export default function Body() {
             Duration
           </th>
           <th scope="col" className="px-6 py-3">
-            Start date
+            Status
           </th>
           <th scope="col" className="px-6 py-3">
-            End date
-          </th>
-          <th scope="col" className="px-6 py-3">
-            Description
+            Course
           </th>
           <th scope="col" className="px-6 py-3 text-center">
             Action
@@ -127,9 +122,8 @@ export default function Body() {
                 {moduleCourse.name}
               </th>
               <td className="px-6 py-4">{moduleCourse.duration}</td>
-              <td className="px-6 py-4">{moduleCourse.start_date?.slice(0,10)}</td>
-              <td className="px-6 py-4">{moduleCourse.end_date?.slice(0,10)}</td>
-              <td className="px-6 py-4">{moduleCourse.description}</td>
+              <td className="px-6 py-4">{moduleCourse.status?'True':'False'}</td>
+              <td className="px-6 py-4">{(moduleCourse.course?.name)?(moduleCourse.course?.name):"null"}</td>
               <td className="px-6 py-4">
                 <div className="flex justify-between">
                   <Button type="dashed" dark 

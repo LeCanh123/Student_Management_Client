@@ -108,7 +108,32 @@ export default function AddStudent(data) {
         }
   
     }
+
+    //submit form file
+    const [studentFile,setStudentFile]=useState(null);
+    const [openAddStudentFromFile,setOpenAddStudentFromFile]=useState(false);
+    function addStudentFile (e){
+    setStudentFile(e)
+    }
+    async function handleFormSubmitFromFile(e){
+        e.preventDefault() 
+        const access_token = localStorage.getItem("access_token");
+        if(studentFile){
+            const formData = new FormData();
+            formData.append('file', studentFile);
+            let createNewStudent=await apis.studentApi.create_from_file(access_token,formData);
+            if(createNewStudent.status==201){
+                data.data.setOpen(false);
+                data.data.success(createNewStudent.data?.message)
+                data.data.getData()
+            }else{
+                data.data.error(createNewStudent.message)
+            }
+        }else{
+            data.data.error("Please fill in all fields")
+        }
     
+    }
     
     //email
     const [isUserEmailvalid,setIsUserEmailvalid]=useState('')
@@ -131,7 +156,7 @@ export default function AddStudent(data) {
     onCancel={handleCancel}
     >
     <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-        <form onSubmit={(e) => {handleFormSubmit(e);}}>
+        {!openAddStudentFromFile?<form onSubmit={(e) => {handleFormSubmit(e);}}>
             <div className="grid gap-4 sm:grid-cols-1 sm:gap-6">
 {/* Name + Birthday*/}
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -254,7 +279,19 @@ export default function AddStudent(data) {
                         })}
                     </select>
                 </div>
-            </div>
+{/* Add form file */}                
+                <div className="sm:col-span-2">
+                        <label
+                            htmlFor="address"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                            Add from exel file
+                        </label>
+                        <input type="checkbox" id="addRadio" name="fileOption" value="add" style={{border:"1px solid"}} 
+                        onChange={()=>{setOpenAddStudentFromFile(!openAddStudentFromFile)}}
+                        />
+                </div>
+                </div>
 {/* Submit */}
             <button
                 type="submit"
@@ -262,7 +299,57 @@ export default function AddStudent(data) {
             >
                 Add New Student
             </button>
-        </form>
+        </form>:
+        <></>
+        }
+
+{/* Add form file */}
+    {openAddStudentFromFile?<form onSubmit={(e) => {handleFormSubmitFromFile(e);}}>
+    <div className="grid gap-4 sm:grid-cols-1 sm:gap-6">
+        <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="sm:col-span-2">
+                            <label
+                                htmlFor="studentFile"
+                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >
+                                Student File
+                            </label>
+                            <input
+                                type="file"
+                                name="studentFile"
+                                id='name'
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Name of student"
+                                required=""
+                                accept=".xlsx"
+                                onChange={(e)=>{ addStudentFile(e.target.files[0])}}
+                            />
+
+                        </div>
+        </div>
+        {/* Add form file */}                
+        <div className="sm:col-span-2">
+                        <label
+                            htmlFor="address"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                            Add from form
+                        </label>
+                        <input type="checkbox" id="addRadio" name="fileOption" value="add" style={{border:"1px solid"}} 
+                        onChange={()=>{setOpenAddStudentFromFile(!openAddStudentFromFile)}}
+                        />
+        </div>
+    </div>
+{/* Submit */}
+    <button
+        type="submit"
+        className="mt-6 w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+    >
+        Add New Student
+    </button>
+    </form>:
+    <></>
+    }
     </div>
     </Modal>
   )

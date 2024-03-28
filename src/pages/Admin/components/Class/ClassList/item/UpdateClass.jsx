@@ -81,6 +81,33 @@ export default function UpdateClass(data) {
       }));
   }
 
+  // open add student to class
+  const [studentFile,setStudentFile]=useState(null);
+  const [openAddStudentToClass,setOpenAddStudentToClass]=useState(false);
+  function addStudentFile (e){
+    setStudentFile(e)
+  }
+  async function handleFormSubmitFromFile(e){
+    e.preventDefault() 
+    const access_token = localStorage.getItem("access_token");
+    if(studentFile){
+        const formData = new FormData();
+        formData.append('file', studentFile);
+        formData.append('class_id', newDataUpdate.id);
+        let createNewStudent=await apis.classApi.add_student_from_file(access_token,formData);
+        if(createNewStudent.status==201){
+            data.data.setOpen(false);
+            data.data.success(createNewStudent.data?.message)
+            data.data.getData()
+        }else{
+            data.data.error(createNewStudent.message)
+        }
+    }else{
+        data.data.error("Please fill in all fields")
+    }
+
+  }
+
   return (
     <Modal
       title="UPDATE CLASS INFORMATION"
@@ -89,49 +116,53 @@ export default function UpdateClass(data) {
       onCancel={handleCancel}
     >
       <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-        <form
+        {!openAddStudentToClass?<form
           onSubmit={(e) => {
             handleFormSubmit(newDataUpdate.id, e);
           }}
+         
         >
-          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6"
+          >
 {/* Name */}
-            <div className="sm:col-span-2">
-              <label
-                htmlFor="name"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Name"
-                required=""
-                value={newDataUpdate.name}
-                onChange={(e)=>{setFormData(e)}}
-              />
-            </div>
+          <div className="sm:col-span-2"
+          
+          >
+            <label
+              htmlFor="name"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Name"
+              required=""
+              value={newDataUpdate.name}
+              onChange={(e)=>{setFormData(e)}}
+            />
+          </div>
 {/* Max student */}
-            <div className="w-full">
-              <label
-                htmlFor="max_students"
-                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Max student
-              </label>
-              <input
-                  type="number"
-                  name="max_students"
-                  id='email'
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Max student"
-                  required=""
-                  value={newDataUpdate.max_students}
-                  onChange={(e)=>{ setFormData(e)}}
-              />
-            </div>
+        <div className="w-full">
+          <label
+            htmlFor="max_students"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Max student
+          </label>
+          <input
+              type="number"
+              name="max_students"
+              id='email'
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Max student"
+              required=""
+              value={newDataUpdate.max_students}
+              onChange={(e)=>{ setFormData(e)}}
+          />
+        </div>
 {/* Course id */}
             <div className="sm:col-span-2">
               <label
@@ -184,6 +215,19 @@ export default function UpdateClass(data) {
                   })}
               </select>
             </div>
+
+{/* Add student to class */}                
+            <div className="sm:col-span-2">
+                        <label
+                            htmlFor="addstudenttothisclass"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                            Add student to this class
+                        </label>
+                        <input type="checkbox" id="addRadio" name="addstudenttothisclass" value="add" style={{border:"1px solid"}} 
+                        onChange={()=>{setOpenAddStudentToClass(!openAddStudentToClass)}}
+                        />
+                </div>
             </div>
 {/* Submit */}
           <button
@@ -192,7 +236,57 @@ export default function UpdateClass(data) {
           >
             Update
           </button>
-        </form>
+        </form>:<></>}
+
+{/* Add student to this class */}
+{openAddStudentToClass?<form
+ onSubmit={(e) => {handleFormSubmitFromFile(e);}}
+ >
+    <div className="grid gap-4 sm:grid-cols-1 sm:gap-6">
+        <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="sm:col-span-2">
+                            <label
+                                htmlFor="studentFile"
+                                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >
+                                Student File
+                            </label>
+                            <input
+                                type="file"
+                                name="studentFile"
+                                id='name'
+                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Name of student"
+                                required=""
+                                accept=".xlsx"
+                                onChange={(e)=>{ addStudentFile(e.target.files[0])}}
+                            />
+
+                        </div>
+        </div>
+{/* Add form file */}                
+        <div className="sm:col-span-2">
+                        <label
+                            htmlFor="address"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                            Add class
+                        </label>
+                        <input type="checkbox" id="addRadio" name="fileOption" value="add" style={{border:"1px solid"}} 
+                        onChange={()=>{setOpenAddStudentToClass(!openAddStudentToClass)}}
+                        />
+        </div>
+    </div>
+{/* Submit */}
+    <button
+        type="submit"
+        className="mt-6 w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+    >
+        Add New Student
+    </button>
+    </form>:
+    <></>
+    }
       </div>
     </Modal>
   )

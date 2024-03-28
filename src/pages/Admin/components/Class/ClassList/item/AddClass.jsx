@@ -62,7 +62,6 @@ export default function AddClass(data) {
         }));
     }
 
-
     //submit
     async function handleFormSubmit(e){
         e.preventDefault()  
@@ -91,7 +90,7 @@ export default function AddClass(data) {
     onCancel={handleCancel}
     >
     <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-        <form onSubmit={(e) => {handleFormSubmit(e);}}>
+        {<form onSubmit={(e) => {handleFormSubmit(e);}}>
             <div className="grid gap-4 sm:grid-cols-1 sm:gap-6">
 {/* Name +Max student*/}
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -193,7 +192,7 @@ export default function AddClass(data) {
             >
                 Add New Class
             </button>
-        </form>
+        </form>}
     </div>
     </Modal>
   )

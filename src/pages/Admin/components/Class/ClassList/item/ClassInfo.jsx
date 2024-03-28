@@ -96,7 +96,31 @@ export default function ClassInfo(data) {
         >{dataDetail.status?"true":"false"}</span>
     </div>
     </div>
+{/* Student list */}
+    <div>
+        <label
+        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >
+        Student List
+        </label>
+    <table style={{width:"100%",border:"1px solid",borderCollapse:"collapse"}}>
+        <tr>
+            <th style={{border:"1px solid"}}>ID</th>
+            <th style={{border:"1px solid"}}>Name</th>
+            <th style={{border:"1px solid"}}>Email</th>
+        </tr>
+        {(dataDetail?.student?.length>0)&&(dataDetail?.student?.map((OneStudent)=>{
+            return  <tr>
+                        <td style={{border:"1px solid"}}>{OneStudent.id}</td>
+                        <td style={{border:"1px solid"}}>{OneStudent.name}</td>
+                        <td style={{border:"1px solid"}}>{OneStudent.email}</td>
+                    </tr>
+        }))}
+    </table>
+    </div>
+{/* End Student List */}
     </form>
+
     </div>
     </Modal>
   )

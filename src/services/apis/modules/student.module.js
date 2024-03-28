@@ -14,6 +14,19 @@ export const studentModule= {
       });
   },
 
+  create_from_file: async (access_token, form_data) => {
+    return await axios
+      .post(import.meta.env.VITE_SERVER_HOST + "/api/students/async-with-excel", form_data, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then((response) => response)
+      .catch((error) => {
+        return error.response.data
+      });
+  },
+
   search: async (access_token,keyword,skip,take) => {
     return await axios
       .get(

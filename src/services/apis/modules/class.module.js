@@ -37,6 +37,19 @@ export default {
     );
   },
 
+  add_student_from_file: async (access_token, form_data) => {
+    return await axios
+      .post(import.meta.env.VITE_SERVER_HOST + "/api/classes/add-student-with-excel", form_data, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then((response) => response)
+      .catch((error) => {
+        return error.response.data
+      });
+  },
+
   find_by_id: async (class_id) => {
     return await axios
       .get(import.meta.env.VITE_SERVER_HOST + "api/classes" + class_id)

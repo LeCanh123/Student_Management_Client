@@ -129,11 +129,6 @@ export default function Body() {
                 >
                 Detail
                 </Button>
-                <ClassInfo data={{open:openModelShowDetail,
-                    setOpen:setOpenModelShowDetail,
-                    dataDetail,
-                }}></ClassInfo>
-
 
                 <Button type="dashed" dark
                   onClick={()=>handleOpenModalUpdate(class1)}
@@ -142,11 +137,6 @@ export default function Body() {
                       <EditOutlined />
                   </span>
                 </Button>
-                {(<UpdateClass data={{dataUpdate,open:openModelUpdate,setOpen:setOpenModelUpdate,
-                  success,error,handleGetClassList
-                }}></UpdateClass>)}
-
-
                 <Button type="dashed" dark>
                 <span>
                     <DeleteOutlined />
@@ -159,6 +149,8 @@ export default function Body() {
 
       </tbody>
     </table>
+    <ClassInfo data={{open:openModelShowDetail,setOpen:setOpenModelShowDetail,dataDetail,}}></ClassInfo>
+    <UpdateClass data={{dataUpdate,open:openModelUpdate,setOpen:setOpenModelUpdate,success,error,handleGetClassList}}></UpdateClass>
     <AddClass data={{open:openFormAddNewClass,setOpen:setOpenFormAddNewClass,success,error,getData:handleGetClassList}} ></AddClass>
   </div>
   )

@@ -167,7 +167,7 @@ const Admin = () => {
       case "sub7":
         return <ModuleCourseList/>;
       default:
-        return  <ModuleCourseList />;
+        return  <ClassList/>;
     }
   };
   const [collapsed, setCollapsed] = useState(false);
